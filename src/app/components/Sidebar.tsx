@@ -28,7 +28,7 @@ export default function Sidebar({
             <Sprout className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-white text-lg font-bold leading-tight tracking-tight">BukidGabay</h1>
+            <h1 className="text-white text-lg font-bold leading-tight tracking-tight">FieldLink</h1>
             <p className="text-green-200 text-[11px]">{t.tagline}</p>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function Sidebar({
           )}
           <div className="flex items-center gap-2 px-3 text-[10px] text-[#9ca3af]">
             <Sprout className="w-3 h-3" />
-            <span>Dept. of Agriculture PH</span>
+            <span>FieldLink</span>
           </div>
         </div>
       </div>
