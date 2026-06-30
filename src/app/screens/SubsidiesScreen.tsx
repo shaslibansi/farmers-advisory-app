@@ -68,44 +68,46 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-3 md:px-8 md:py-6 space-y-4">
         {filtered.length === 0 ? (
-          <div className="py-12 text-center">
+          <div className="col-span-full py-12 text-center">
             <p className="text-3xl mb-3">🔍</p>
             <p className="text-muted-foreground text-sm">{t.noResults}</p>
           </div>
         ) : (
-          filtered.map((s) => (
-            <div key={s.name} className="bg-card border border-border rounded-2xl p-4 space-y-2.5">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl shrink-0">{s.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-foreground leading-snug">{s.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{s.commodity}</p>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((s) => (
+              <div key={s.name} className="bg-card border border-border rounded-2xl p-4 space-y-2.5">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0">{s.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-foreground leading-snug">{s.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{s.commodity}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-xl border ${STATUS_STYLES[s.statusType]}`}>
-                <span className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[s.statusType]}`} />
-                {s.status}
-              </div>
+                <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-xl border ${STATUS_STYLES[s.statusType]}`}>
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[s.statusType]}`} />
+                  {s.status}
+                </div>
 
-              <div className="space-y-1.5">
-                <div className="flex gap-2 text-xs">
-                  <span className="text-muted-foreground shrink-0 font-medium">{t.requirements}:</span>
-                  <span className="text-foreground">{s.requirements}</span>
-                </div>
-                <div className="flex gap-2 text-xs">
-                  <span className="text-muted-foreground shrink-0 font-medium">{t.deadline}:</span>
-                  <span className="text-foreground font-semibold">{s.deadline}</span>
+                <div className="space-y-1.5">
+                  <div className="flex gap-2 text-xs">
+                    <span className="text-muted-foreground shrink-0 font-medium">{t.requirements}:</span>
+                    <span className="text-foreground">{s.requirements}</span>
+                  </div>
+                  <div className="flex gap-2 text-xs">
+                    <span className="text-muted-foreground shrink-0 font-medium">{t.deadline}:</span>
+                    <span className="text-foreground font-semibold">{s.deadline}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
 
         {/* Disclaimer */}
-        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 mt-1">
+        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 md:max-w-lg">
           <RefreshCw className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
           <p className="text-xs text-amber-800">
             <span className="font-semibold">{t.dataAs} Hunyo 27, 2026.</span> {t.disclaimer}.
