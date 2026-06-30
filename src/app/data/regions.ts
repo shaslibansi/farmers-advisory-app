@@ -1,0 +1,32 @@
+export const REGIONS = [
+  "Region I – Ilocos",
+  "Region II – Cagayan Valley",
+  "Region III – Central Luzon",
+  "Region IV-A – CALABARZON",
+  "Region IV-B – MIMAROPA",
+  "Region V – Bicol",
+  "Region VI – Western Visayas",
+  "Region VII – Central Visayas",
+  "Region VIII – Eastern Visayas",
+  "Region IX – Zamboanga Peninsula",
+  "Region X – Northern Mindanao",
+  "Region XI – Davao",
+  "Region XII – SOCCSKSARGEN",
+  "Region XIII – Caraga",
+  "NCR – Metro Manila",
+  "CAR – Cordillera",
+  "BARMM – Bangsamoro",
+];
+
+export const MUNICIPALITIES: Record<string, string[]> = {
+  "Region VI – Western Visayas": ["Iloilo City", "Barotac Nuevo", "Dumangas", "Pototan", "San Miguel", "Cabatuan", "Sta. Barbara", "Passi City"],
+  "Region VII – Central Visayas": ["Cebu City", "Danao City", "Consolacion", "Liloan", "Mandaue City", "Lapu-Lapu City", "Talisay City"],
+  "Region I – Ilocos": ["Laoag City", "Vigan City", "Batac City", "San Nicolas", "Paoay", "Currimao", "Dingras"],
+  "Region III – Central Luzon": ["San Fernando City", "Angeles City", "Tarlac City", "Cabanatuan City", "Gapan City", "Muñoz City"],
+  "Region V – Bicol": ["Legazpi City", "Naga City", "Sorsogon City", "Tabaco City", "Ligao City", "Daraga"],
+  "Region VIII – Eastern Visayas": ["Tacloban City", "Ormoc City", "Borongan City", "Maasin City", "Catbalogan City"],
+  "Region XI – Davao": ["Davao City", "Tagum City", "Panabo City", "Digos City", "Mati City", "Samal City"],
+  "Region IV-A – CALABARZON": ["Antipolo City", "Calamba City", "Santa Rosa City", "Batangas City", "Lucena City"],
+  "Region II – Cagayan Valley": ["Tuguegarao City", "Cauayan City", "Santiago City", "Ilagan City"],
+  "Region X – Northern Mindanao": ["Cagayan de Oro City", "Iligan City", "Ozamiz City", "Gingoog City"],
+};
