@@ -1,5 +1,5 @@
 export type Language = "Tagalog" | "Ilocano" | "Hiligaynon" | "Cebuano" | "Bikol" | "Waray";
-export type Screen = "dashboard" | "subsidies" | "support";
+export type Screen = "dashboard" | "subsidies" | "support" | "settings";
 export type SubsidyTab = "active" | "upcoming" | "completed";
 export type StatusType = "green" | "yellow" | "blue" | "red" | "gray";
 

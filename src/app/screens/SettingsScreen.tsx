@@ -1,10 +1,10 @@
-import { MapPin } from "lucide-react";
+import { MapPin, ArrowLeft, Languages } from "lucide-react";
 import type { Language } from "../types";
 import { LANGUAGES, LANG_NATIVE, T } from "../data/translations";
 import { REGIONS, MUNICIPALITIES } from "../data/regions";
 
-export default function OnboardingScreen({
-  language, setLanguage, region, setRegion, municipality, setMunicipality, onProceed,
+export default function SettingsScreen({
+  language, setLanguage, region, setRegion, municipality, setMunicipality, onBack, onRestart,
 }: {
   language: Language;
   setLanguage: (l: Language) => void;
@@ -12,32 +12,29 @@ export default function OnboardingScreen({
   setRegion: (r: string) => void;
   municipality: string;
   setMunicipality: (m: string) => void;
-  onProceed: () => void;
+  onBack: () => void;
+  onRestart: () => void;
 }) {
   const t = T[language];
-  const canProceed = region !== "" && municipality !== "";
   const municipalities = MUNICIPALITIES[region] ?? [];
 
   return (
-    <div className="min-h-screen md:min-h-0 bg-white flex flex-col">
-      <div className="bg-gradient-to-br from-[#0f6b3a] via-[#0f6b3a] to-[#1a8a4a] px-6 pt-10 pb-10 md:px-10 md:pt-12 md:pb-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }}
-        />
-        <div className="flex items-center gap-3 mb-2 relative z-10">
-          <span className="text-4xl md:text-5xl">🌾</span>
-          <div>
-            <h1 className="text-white text-2xl md:text-3xl font-bold leading-tight">BukidGabay</h1>
-            <p className="text-green-200 text-sm md:text-base">{t.tagline}</p>
-          </div>
-        </div>
+    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-0">
+      <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-4 md:px-8 md:pt-6 md:pb-5 flex items-center gap-3 shadow-sm">
+        <button onClick={onBack} className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </button>
+        <h2 className="text-white text-lg md:text-xl font-bold">Settings</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-6 md:px-10 md:py-8 space-y-7 md:space-y-8">
-        <section>
-          <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">
-            {t.selectLang}
-          </p>
+      <div className="px-4 py-4 md:px-8 md:py-6 space-y-6">
+        <section className="bg-white border border-[#e5e7eb] rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Languages className="w-4 h-4 text-[#0f6b3a]" />
+            <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest">
+              {t.selectLang}
+            </p>
+          </div>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             {LANGUAGES.map((lang) => (
               <button
@@ -55,15 +52,16 @@ export default function OnboardingScreen({
           </div>
         </section>
 
-        <section>
-          <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">
-            {t.selectLoc}
-          </p>
+        <section className="bg-white border border-[#e5e7eb] rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="w-4 h-4 text-[#0f6b3a]" />
+            <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest">
+              {t.selectLoc}
+            </p>
+          </div>
           <div className="space-y-3 md:flex md:space-y-0 md:gap-3">
             <div className="relative flex-1">
-              <label htmlFor="onboarding-region" className="sr-only">{t.selectRegion}</label>
               <select
-                id="onboarding-region"
                 value={region}
                 onChange={(e) => { setRegion(e.target.value); setMunicipality(""); }}
                 className="w-full appearance-none bg-[#f9fafb] border border-[#e5e7eb] rounded-xl px-4 py-3 pr-10 text-sm font-medium text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0f6b3a] shadow-sm"
@@ -77,9 +75,7 @@ export default function OnboardingScreen({
             </div>
 
             <div className="relative flex-1">
-              <label htmlFor="onboarding-municipality" className="sr-only">{t.selectMunicipality}</label>
               <select
-                id="onboarding-municipality"
                 value={municipality}
                 onChange={(e) => setMunicipality(e.target.value)}
                 disabled={municipalities.length === 0}
@@ -95,17 +91,17 @@ export default function OnboardingScreen({
           </div>
         </section>
 
-        <button
-          onClick={onProceed}
-          disabled={!canProceed}
-          className="w-full bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] text-white font-bold py-4 rounded-2xl text-base transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
-        >
-          {t.proceed}
-        </button>
-
-        <p className="text-center text-xs text-[#6b7280] pb-4">
-          BukidGabay · Dept. of Agriculture Philippines
-        </p>
+        <div className="border-t border-[#e5e7eb] pt-6">
+          <button
+            onClick={onRestart}
+            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-sm py-3 rounded-xl hover:shadow-md transition-all active:scale-[0.98]"
+          >
+            Restart Onboarding
+          </button>
+          <p className="text-xs text-[#6b7280] text-center mt-2">
+            This will clear your saved settings and return to the welcome screen.
+          </p>
+        </div>
       </div>
     </div>
   );

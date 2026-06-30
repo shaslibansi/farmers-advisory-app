@@ -15,18 +15,24 @@ export default function BottomNav({
   ];
 
   return (
-    <div className="fixed bottom-0 inset-x-0 bg-white border-t border-border flex safe-area-pb z-50 md:hidden">
+    <div className="fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-lg border-t border-border flex pb-[env(safe-area-inset-bottom)] z-50 md:hidden">
       {tabs.map(({ key, icon, label }) => (
         <button
           key={key}
           onClick={() => setScreen(key)}
-          className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
-            screen === key ? "text-primary" : "text-muted-foreground"
+          aria-label={label}
+          aria-current={screen === key ? "page" : undefined}
+          className={`flex-1 flex flex-col items-center gap-1 py-2 transition-all min-h-[56px] relative ${
+            screen === key ? "text-[#0f6b3a]" : "text-[#6b7280]"
           }`}
         >
-          {icon}
+          {screen === key && (
+            <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] rounded-b-full" />
+          )}
+          <div className={`p-1.5 rounded-xl transition-colors ${screen === key ? "bg-[#f0fdf4]" : ""}`}>
+            {icon}
+          </div>
           <span className="text-[10px] font-semibold">{label}</span>
-          {screen === key && <span className="absolute bottom-1 w-1 h-1 bg-primary rounded-full" />}
         </button>
       ))}
     </div>
