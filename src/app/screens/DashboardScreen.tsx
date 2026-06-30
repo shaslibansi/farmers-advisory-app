@@ -223,7 +223,7 @@ export default function DashboardScreen({
                 </div>
               )}
 
-              {!weatherLoading && !weatherError && weather.length === 0 && (
+              {!weatherLoading && !weatherError && weather.length === 0 && municipality && (
                 <div className="bg-white border border-[#e5e7eb] rounded-2xl p-4 text-center shadow-sm">
                   <p className="text-xs text-[#6b7280]">No weather data available</p>
                 </div>
