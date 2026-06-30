@@ -1,40 +1,137 @@
-import { useState } from "react";
-import { MapPin, Bell, AlertTriangle, X, ChevronRight } from "lucide-react";
-import { WEATHER } from "../data/weather";
+import { useState, useEffect } from "react";
+import { MapPin, Bell, AlertTriangle, X, ChevronRight, Sprout, Calendar, Phone, RefreshCw } from "lucide-react";
+import { fetchWeather } from "../data/weather";
+import { SUBSIDIES } from "../data/subsidies";
+import type { Screen, WeatherDay } from "../types";
+
+const MONTHS_FIL = [
+  "Enero", "Pebrero", "Marso", "Abril", "Mayo", "Hunyo",
+  "Hulyo", "Agosto", "Setyembre", "Oktubre", "Nobyembre", "Disyembre",
+];
+
+const DAYS_FIL = ["Linggo", "Lunes", "Martes", "Miyerkules", "Huwebes", "Biyernes", "Sabado"];
+
+function formattedDate() {
+  const d = new Date();
+  const dayName = DAYS_FIL[d.getDay()];
+  const month = MONTHS_FIL[d.getMonth()];
+  const day = d.getDate();
+  const year = d.getFullYear();
+  return `${dayName}, ${month} ${day}, ${year}`;
+}
+
+function getGreeting(t: Record<string, string>) {
+  const hour = new Date().getHours();
+  if (hour < 12) return t.morning;
+  if (hour < 18) return t.afternoon;
+  return t.evening;
+}
 
 export default function DashboardScreen({
-  t, municipality, region,
+  t, municipality, region, setScreen,
 }: {
   t: Record<string, string>;
   municipality: string;
   region: string;
+  setScreen: (s: Screen) => void;
 }) {
   const [alertDismissed, setAlertDismissed] = useState(false);
+  const [weather, setWeather] = useState<WeatherDay[]>([]);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState(false);
+
+  const activeCount = SUBSIDIES.active.length;
+  const upcomingCount = SUBSIDIES.upcoming.length;
+  const hasLocation = municipality || region;
+  const greeting = getGreeting(t);
+
+  useEffect(() => {
+    if (!hasLocation) return;
+    let cancelled = false;
+    setWeatherLoading(true);
+    setWeatherError(false);
+
+    fetchWeather(municipality || region)
+      .then((data) => {
+        if (!cancelled) {
+          setWeather(data);
+          setWeatherLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setWeatherError(true);
+          setWeatherLoading(false);
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [municipality, region, hasLocation]);
+
+  function retryWeather() {
+    setWeatherError(false);
+    setWeatherLoading(true);
+    fetchWeather(municipality || region)
+      .then(setWeather)
+      .catch(() => setWeatherError(true))
+      .finally(() => setWeatherLoading(false));
+  }
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-0">
-      <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-4 md:px-8 md:pt-6 md:pb-5 flex items-start justify-between shadow-sm">
-        <div>
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <MapPin className="w-3.5 h-3.5 text-green-300" />
-            <span className="text-green-200 text-xs md:text-sm font-medium">{municipality || region}</span>
+      <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-5 md:px-8 md:pt-6 md:pb-6 shadow-sm">
+        <div className="flex items-start justify-between">
+          <div className="min-w-0 flex-1">
+            {hasLocation ? (
+              <>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <MapPin className="w-3.5 h-3.5 text-green-300 shrink-0" />
+                  <span className="text-green-200 text-xs md:text-sm font-medium truncate">{municipality || region}</span>
+                </div>
+                <h2 className="text-white text-lg md:text-xl font-bold leading-tight">
+                  {greeting}!
+                </h2>
+                <p className="text-green-200 text-xs md:text-sm mt-0.5">{formattedDate()}</p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-white text-lg md:text-xl font-bold leading-tight">
+                  {greeting}!
+                </h2>
+                <p className="text-green-200 text-xs md:text-sm mt-0.5">{t.selectLoc}</p>
+              </>
+            )}
           </div>
-          <h2 className="text-white text-lg md:text-xl font-bold">{t.advisories}</h2>
+          <button
+            onClick={() => setAlertDismissed(false)}
+            className="mt-1 relative p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors backdrop-blur-sm shrink-0"
+            aria-label="View alerts"
+          >
+            <Bell className="w-5 h-5 text-white" />
+            {!alertDismissed && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full ring-2 ring-[#0f6b3a]" />
+            )}
+          </button>
         </div>
-        <button
-          onClick={() => setAlertDismissed(false)}
-          className="mt-1 relative p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors backdrop-blur-sm"
-          aria-label="View alerts"
-        >
-          <Bell className="w-5 h-5 text-white" />
-          {!alertDismissed && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full ring-2 ring-[#0f6b3a]" />
-          )}
-        </button>
       </div>
 
       <div className="px-4 py-4 md:px-8 md:py-6 space-y-4 md:space-y-6">
-        {!alertDismissed && (
+        {!hasLocation && (
+          <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5 shadow-sm text-center">
+            <MapPin className="w-8 h-8 text-[#0f6b3a] mx-auto mb-2" />
+            <p className="text-sm font-semibold text-[#111827] mb-1">{t.setupPrompt}</p>
+            <p className="text-xs text-[#6b7280] mb-3">{t.setupDesc}</p>
+            <button
+              onClick={() => setScreen("settings")}
+              className="inline-flex items-center gap-1.5 bg-[#0f6b3a] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <SettingsIcon />
+              Settings
+            </button>
+          </div>
+        )}
+
+        {!alertDismissed && hasLocation && (
           <div className="bg-gradient-to-r from-red-600 to-red-500 text-white rounded-2xl p-4 md:p-5 flex gap-3 shadow-md">
             <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-red-200" />
             <div className="flex-1 min-w-0">
@@ -47,63 +144,199 @@ export default function DashboardScreen({
           </div>
         )}
 
-        <div className="md:grid md:grid-cols-2 md:gap-6 space-y-4 md:space-y-0">
-          <section>
-            <h3 className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">{t.weatherTitle}</h3>
-            <div className="grid grid-cols-3 gap-3">
-              {WEATHER.map((w) => (
-                <div
-                  key={w.day}
-                  className={`rounded-2xl p-3 md:p-4 text-center border shadow-sm hover:shadow-md transition-shadow ${
-                    w.warn ? "bg-white border-amber-200" : "bg-white border-[#e5e7eb]"
-                  }`}
-                >
-                  <p className="text-2xl md:text-3xl mb-1">{w.icon}</p>
-                  <p className="text-base md:text-lg font-bold text-[#111827]">{w.temp}</p>
-                  <p className="text-xs text-[#6b7280] mt-0.5">{w.desc}</p>
-                  <p className="text-xs font-semibold text-[#111827] mt-1">{w.day}</p>
-                  {w.warn && (
-                    <span className="inline-block mt-1.5 text-[10px] font-bold bg-amber-400 text-white px-2 py-0.5 rounded-full shadow-sm">⚠️ Alerto</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
+        {alertDismissed && hasLocation && (
+          <button
+            onClick={() => setAlertDismissed(false)}
+            className="w-full flex items-center gap-2 bg-green-50 border border-green-200 rounded-2xl px-4 py-3 text-xs text-green-700 hover:bg-green-100 transition-colors"
+          >
+            <Bell className="w-3.5 h-3.5" />
+            {t.noAlerts}
+          </button>
+        )}
 
-          <section className="bg-white border border-[#e5e7eb] rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl md:text-2xl">📅</span>
-              <h3 className="text-sm md:text-base font-bold text-[#0f6b3a]">{t.calendarTitle}</h3>
-            </div>
-            <p className="text-sm md:text-base text-[#111827] leading-relaxed">{t.calendarBody}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {["🌾 Pagasa 7", "🌾 NSIC Rc 222", "🌾 Tubigan 18"].map((v) => (
-                <span key={v} className="text-xs bg-[#f0fdf4] text-[#0f6b3a] font-semibold px-2.5 py-1 rounded-full">{v}</span>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <section>
-          <h3 className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">DA Bulletins</h3>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              { icon: "🐛", color: "yellow", title: "Pest Watch: Brown Planthopper", date: "Hunyo 25, 2026" },
-              { icon: "💧", color: "blue", title: "Irigasyon: Magdrain bago mag-typhoon", date: "Hunyo 23, 2026" },
-              { icon: "✅", color: "green", title: "RCEF Vouchers: Panahon na ng pag-claim", date: "Hunyo 20, 2026" },
-            ].map((item) => (
-              <div key={item.title} className="flex items-start gap-3 bg-white border border-[#e5e7eb] rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all cursor-pointer">
-                <span className="text-xl shrink-0">{item.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#111827] leading-snug">{item.title}</p>
-                  <p className="text-xs text-[#6b7280] mt-0.5">{item.date}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-[#6b7280] shrink-0 mt-0.5" />
+        {hasLocation && (
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={() => setScreen("subsidies")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
+            >
+              <div className="w-8 h-8 rounded-xl bg-[#f0fdf4] flex items-center justify-center mb-2">
+                <Sprout className="w-4 h-4 text-[#0f6b3a]" />
               </div>
-            ))}
+              <p className="text-lg md:text-2xl font-bold text-[#111827]">{activeCount}</p>
+              <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">{t.activeSubsidies}</p>
+            </button>
+
+            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center mb-2">
+                <Bell className="w-4 h-4 text-amber-600" />
+              </div>
+              <p className="text-lg md:text-2xl font-bold text-[#111827]">{!alertDismissed ? 1 : 0}</p>
+              <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">Alerto</p>
+            </div>
+
+            <button
+              onClick={() => setScreen("subsidies")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
+            >
+              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center mb-2">
+                <Calendar className="w-4 h-4 text-blue-600" />
+              </div>
+              <p className="text-lg md:text-2xl font-bold text-[#111827]">{upcomingCount}</p>
+              <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">{t.upcoming}</p>
+            </button>
           </div>
-        </section>
+        )}
+
+        {hasLocation && (
+          <div className="md:grid md:grid-cols-2 md:gap-6 space-y-4 md:space-y-0">
+            <section>
+              <h3 className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">{t.weatherTitle}</h3>
+
+              {weatherLoading && (
+                <div className="space-y-3">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="rounded-2xl bg-white border border-[#e5e7eb] p-4 animate-pulse">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-[#e5e7eb]" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-[#e5e7eb] rounded w-1/3" />
+                          <div className="h-3 bg-[#e5e7eb] rounded w-1/2" />
+                        </div>
+                        <div className="h-6 w-14 bg-[#e5e7eb] rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {weatherError && (
+                <div className="bg-white border border-red-200 rounded-2xl p-4 text-center shadow-sm">
+                  <p className="text-xs text-red-600 mb-2">Failed to load weather data</p>
+                  <button
+                    onClick={retryWeather}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#0f6b3a] bg-[#f0fdf4] px-3 py-1.5 rounded-xl hover:bg-[#dcfce7] transition-colors"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              {!weatherLoading && !weatherError && weather.length === 0 && (
+                <div className="bg-white border border-[#e5e7eb] rounded-2xl p-4 text-center shadow-sm">
+                  <p className="text-xs text-[#6b7280]">No weather data available</p>
+                </div>
+              )}
+
+              {!weatherLoading && !weatherError && weather.length > 0 && (
+                <div className="space-y-3">
+                  {weather.map((w, i) => (
+                    <div
+                      key={w.day}
+                      className={`rounded-2xl border shadow-sm transition-shadow ${
+                        i === 0
+                          ? "bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] border-transparent p-4 md:p-5"
+                          : "bg-white border-[#e5e7eb] p-3 md:p-4"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className={`${i === 0 ? "text-3xl md:text-4xl" : "text-2xl md:text-3xl"}`}>{w.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <p className={`font-semibold ${i === 0 ? "text-white" : "text-[#111827]"}`}>
+                              {i === 0 ? t.today : w.day}
+                            </p>
+                            <p className={`font-bold ${i === 0 ? "text-white text-2xl md:text-3xl" : "text-[#111827] text-lg md:text-xl"}`}>
+                              {w.temp}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <p className={`text-xs ${i === 0 ? "text-green-200" : "text-[#6b7280]"}`}>{w.desc}</p>
+                            {w.warn && (
+                              <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                i === 0 ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800"
+                              }`}>
+                                ⚠️ Alerto
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="bg-white border border-[#e5e7eb] rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xl md:text-2xl">📅</span>
+                <h3 className="text-sm md:text-base font-bold text-[#0f6b3a]">{t.calendarTitle}</h3>
+              </div>
+              <p className="text-sm md:text-base text-[#111827] leading-relaxed">{t.calendarBody}</p>
+              <div className="mt-4 space-y-2">
+                {["🌾 Pagasa 7", "🌾 NSIC Rc 222", "🌾 Tubigan 18"].map((v) => (
+                  <div key={v} className="flex items-center gap-2 text-xs bg-[#f0fdf4] text-[#0f6b3a] font-semibold px-3 py-2 rounded-xl border border-[#dcfce7]">
+                    <Sprout className="w-3.5 h-3.5 shrink-0" />
+                    {v}
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setScreen("subsidies")}
+                className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-[#0f6b3a] bg-[#f0fdf4] py-2.5 rounded-xl border border-[#dcfce7] hover:bg-[#dcfce7] transition-colors"
+              >
+                {t.quickSubsidies}
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </section>
+          </div>
+        )}
+
+
+
+        {hasLocation && (
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={() => setScreen("subsidies")}
+              className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <div className="w-9 h-9 rounded-xl bg-[#f0fdf4] flex items-center justify-center">
+                <Sprout className="w-4 h-4 text-[#0f6b3a]" />
+              </div>
+              <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickSubsidies}</span>
+            </button>
+            <button
+              onClick={() => setScreen("support")}
+              className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+                <Phone className="w-4 h-4 text-blue-600" />
+              </div>
+              <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickSupport}</span>
+            </button>
+            <button
+              onClick={() => setScreen("subsidies")}
+              className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-amber-600" />
+              </div>
+              <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickCalendar}</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+    </svg>
   );
 }

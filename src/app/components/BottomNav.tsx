@@ -1,4 +1,4 @@
-import { Home, FileText, Headphones } from "lucide-react";
+import { Home, FileText, Headphones, MessageCircle } from "lucide-react";
 import type { Screen } from "../types";
 
 export default function BottomNav({
@@ -12,6 +12,7 @@ export default function BottomNav({
     { key: "dashboard" as Screen, icon: <Home className="w-5 h-5" />, label: t.home },
     { key: "subsidies" as Screen, icon: <FileText className="w-5 h-5" />, label: t.subsidiesLabel },
     { key: "support" as Screen, icon: <Headphones className="w-5 h-5" />, label: t.supportLabel },
+    { key: "chatbot" as Screen, icon: <MessageCircle className="w-5 h-5" />, label: t.chatbot },
   ];
 
   return (

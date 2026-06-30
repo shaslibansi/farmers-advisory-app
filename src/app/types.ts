@@ -1,5 +1,5 @@
 export type Language = "Tagalog" | "Ilocano" | "Hiligaynon" | "Cebuano" | "Bikol" | "Waray";
-export type Screen = "dashboard" | "subsidies" | "support" | "settings";
+export type Screen = "dashboard" | "subsidies" | "support" | "settings" | "chatbot";
 export type SubsidyTab = "active" | "upcoming" | "completed";
 export type StatusType = "green" | "yellow" | "blue" | "red" | "gray";
 
@@ -34,6 +34,14 @@ export const STATUS_STYLES: Record<StatusType, string> = {
   red: "bg-red-100 text-red-800 border-red-200",
   gray: "bg-gray-100 text-gray-600 border-gray-200",
 };
+
+export interface WeatherDay {
+  day: string;
+  icon: string;
+  temp: string;
+  desc: string;
+  warn: boolean;
+}
 
 export const STATUS_DOT: Record<StatusType, string> = {
   green: "bg-green-500",

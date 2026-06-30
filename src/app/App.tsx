@@ -6,6 +6,7 @@ import DashboardScreen from "./screens/DashboardScreen";
 import SubsidiesScreen from "./screens/SubsidiesScreen";
 import SupportScreen from "./screens/SupportScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import ChatbotScreen from "./components/chatbot/ChatbotScreen";
 import BottomNav from "./components/BottomNav";
 import Sidebar from "./components/Sidebar";
 
@@ -61,14 +62,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <Sidebar screen={screen} setScreen={setScreen} t={t} />
+      <Sidebar screen={screen} setScreen={setScreen} t={t} municipality={municipality} region={region} />
 
       <main className="flex-1 flex flex-col min-h-screen">
         {screen === "dashboard" && (
-          <DashboardScreen t={t} municipality={municipality} region={region} />
+          <DashboardScreen t={t} municipality={municipality} region={region} setScreen={setScreen} />
         )}
         {screen === "subsidies" && <SubsidiesScreen t={t} />}
         {screen === "support" && <SupportScreen t={t} region={region} />}
+        {screen === "chatbot" && <ChatbotScreen t={t} />}
         {screen === "settings" && (
           <SettingsScreen
             language={language}
