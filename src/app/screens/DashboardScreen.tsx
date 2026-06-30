@@ -160,17 +160,13 @@ export default function DashboardScreen({
               onClick={() => setScreen("subsidies")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
             >
-              <div className="w-8 h-8 rounded-xl bg-[#f0fdf4] flex items-center justify-center mb-2">
-                <Sprout className="w-4 h-4 text-[#0f6b3a]" />
-              </div>
+              <Sprout className="w-5 h-5 text-[#0f6b3a]" />
               <p className="text-lg md:text-2xl font-bold text-[#111827]">{activeCount}</p>
               <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">{t.activeSubsidies}</p>
             </button>
 
             <div className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center mb-2">
-                <Bell className="w-4 h-4 text-amber-600" />
-              </div>
+              <Bell className="w-5 h-5 text-amber-600" />
               <p className="text-lg md:text-2xl font-bold text-[#111827]">{!alertDismissed ? 1 : 0}</p>
               <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">Alerto</p>
             </div>
@@ -179,9 +175,7 @@ export default function DashboardScreen({
               onClick={() => setScreen("subsidies")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
             >
-              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center mb-2">
-                <Calendar className="w-4 h-4 text-blue-600" />
-              </div>
+              <Calendar className="w-5 h-5 text-blue-600" />
               <p className="text-lg md:text-2xl font-bold text-[#111827]">{upcomingCount}</p>
               <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">{t.upcoming}</p>
             </button>
@@ -302,27 +296,21 @@ export default function DashboardScreen({
               onClick={() => setScreen("subsidies")}
               className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
             >
-              <div className="w-9 h-9 rounded-xl bg-[#f0fdf4] flex items-center justify-center">
-                <Sprout className="w-4 h-4 text-[#0f6b3a]" />
-              </div>
+              <Sprout className="w-5 h-5 text-[#0f6b3a]" />
               <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickSubsidies}</span>
             </button>
             <button
               onClick={() => setScreen("support")}
               className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
             >
-              <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                <Phone className="w-4 h-4 text-blue-600" />
-              </div>
+              <Phone className="w-5 h-5 text-blue-600" />
               <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickSupport}</span>
             </button>
             <button
               onClick={() => setScreen("subsidies")}
               className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
             >
-              <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-amber-600" />
-              </div>
+              <Calendar className="w-5 h-5 text-amber-600" />
               <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickCalendar}</span>
             </button>
           </div>
