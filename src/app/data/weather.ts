@@ -1,4 +1,5 @@
 import type { WeatherDay } from "../types";
+import { MUNICIPALITY_COORDS } from "./regions";
 
 const FALLBACK: WeatherDay[] = [
   { day: "Ngayon", icon: "⛈️", temp: "29°C", desc: "Maulan", warn: true },
@@ -8,32 +9,55 @@ const FALLBACK: WeatherDay[] = [
 
 const DAY_LABELS = ["Ngayon", "Bukas", "Makalawa"];
 
-function codeToEmoji(code: number): string {
-  if (code === 1000) return "☀️";
-  if (code === 1003) return "🌤️";
-  if (code >= 1006 && code <= 1009) return "☁️";
-  if (code >= 1030 && code <= 1071) return "🌫️";
-  if (code === 1135 || code === 1147) return "🌫️";
-  if (code >= 1150 && code <= 1201) return "🌧️";
-  if (code >= 1240 && code <= 1246) return "🌧️";
-  if (code === 1273 || code === 1276) return "⛈️";
+function wmoToEmoji(code: number): string {
+  if (code === 0) return "☀️";
+  if (code === 1) return "🌤️";
+  if (code === 2) return "⛅";
+  if (code === 3) return "☁️";
+  if (code >= 45 && code <= 48) return "🌫️";
+  if (code >= 51 && code <= 57) return "🌦️";
+  if (code >= 61 && code <= 67) return "🌧️";
+  if (code >= 71 && code <= 77) return "🌨️";
+  if (code >= 80 && code <= 82) return "🌧️";
+  if (code >= 85 && code <= 86) return "🌨️";
+  if (code >= 95) return "⛈️";
   return "🌤️";
 }
 
-function codeToWarn(code: number): boolean {
-  return code === 1273 || code === 1276 || code >= 1192;
+function wmoToDesc(code: number): string {
+  if (code === 0) return "Maaliwalas";
+  if (code === 1) return "Medyo Maaliwalas";
+  if (code === 2) return "Bahagyang Maulap";
+  if (code === 3) return "Maulap";
+  if (code >= 45 && code <= 48) return "Mahamog";
+  if (code >= 51 && code <= 55) return "Ambón";
+  if (code === 56 || code === 57) return "Malamig na Ambón";
+  if (code >= 61 && code <= 65) return "Ulan";
+  if (code === 66 || code === 67) return "Malamig na Ulan";
+  if (code >= 71 && code <= 75) return "Niyebe";
+  if (code === 77) return "Buhol-buhol na Niyebe";
+  if (code >= 80 && code <= 82) return "Mga Pagbuhos ng Ulan";
+  if (code === 85 || code === 86) return "Mga Pagbuhos ng Niyebe";
+  if (code === 95) return "Bagyo na may Kulog at Kidlat";
+  if (code >= 96) return "Bagyo na may Yelo";
+  return "Maaliwalas";
+}
+
+function wmoToWarn(code: number): boolean {
+  return code >= 95 || code === 82 || code === 86;
 }
 
 export async function fetchWeather(city: string): Promise<WeatherDay[]> {
-  const apiKey = import.meta.env.VITE_WEATHER_API_KEY as string | undefined;
+  const coords = MUNICIPALITY_COORDS[city];
 
-  if (!apiKey) {
+  if (!coords) {
     return FALLBACK;
   }
 
   try {
     const res = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=3&lang=fil`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}` +
+      `&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia/Manila&forecast_days=3`,
       { signal: AbortSignal.timeout(8000) },
     );
 
@@ -41,17 +65,20 @@ export async function fetchWeather(city: string): Promise<WeatherDay[]> {
 
     const json = await res.json();
 
-    if (!json.forecast?.forecastday?.length) {
+    if (!json.daily?.time?.length) {
       throw new Error("No forecast data");
     }
 
-    return json.forecast.forecastday.map((day: { date: string; day: { avgtemp_c: number; condition: { code: number; text: string } } }, i: number) => ({
-      day: DAY_LABELS[i] ?? day.date,
-      icon: codeToEmoji(day.day.condition.code),
-      temp: `${Math.round(day.day.avgtemp_c)}°C`,
-      desc: day.day.condition.text,
-      warn: codeToWarn(day.day.condition.code),
-    }));
+    return json.daily.time.map((date: string, i: number) => {
+      const code = json.daily.weathercode[i];
+      return {
+        day: DAY_LABELS[i] ?? date,
+        icon: wmoToEmoji(code),
+        temp: `${Math.round(json.daily.temperature_2m_max[i])}°C`,
+        desc: wmoToDesc(code),
+        warn: wmoToWarn(code),
+      };
+    });
   } catch {
     return FALLBACK;
   }
