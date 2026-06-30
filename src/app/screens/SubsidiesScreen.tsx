@@ -27,11 +27,11 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
   ];
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden pb-20">
+    <div className="flex-1 flex flex-col overflow-hidden pb-20 md:pb-0">
       {/* Header */}
-      <div className="bg-primary px-4 pt-5 pb-3">
-        <h2 className="text-white text-lg font-bold mb-3">{t.subsidiesLabel} & Vouchers</h2>
-        <div className="relative">
+      <div className="bg-primary px-4 pt-5 pb-3 md:px-8 md:pt-6 md:pb-4">
+        <h2 className="text-white text-lg md:text-xl font-bold mb-3">{t.subsidiesLabel} & Vouchers</h2>
+        <div className="relative md:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             value={query}
@@ -48,7 +48,7 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-border flex">
+      <div className="bg-white border-b border-border flex md:px-8">
         {tabs.map(({ key, label }) => (
           <button
             key={key}
