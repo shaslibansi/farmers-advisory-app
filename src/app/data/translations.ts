@@ -1,6 +1,6 @@
 import type { Language } from "../types";
 
-export const LANGUAGES: Language[] = ["Tagalog", "Ilocano", "Hiligaynon", "Cebuano", "Bikol", "Waray"];
+export const LANGUAGES: Language[] = ["Tagalog", "Ilocano", "Hiligaynon", "Cebuano", "Bikol", "Waray", "English"];
 
 export const LANG_NATIVE: Record<Language, string> = {
   Tagalog: "Tagalog",
@@ -9,6 +9,7 @@ export const LANG_NATIVE: Record<Language, string> = {
   Cebuano: "Bisaya",
   Bikol: "Bikolano",
   Waray: "Winaray",
+  English: "English",
 };
 
 export const T: Record<Language, Record<string, string>> = {
@@ -274,6 +275,50 @@ export const T: Record<Language, Record<string, string>> = {
     quickCalendar: "Kalendaryo",
     setupPrompt: "Ibutang an Imo Lokasyon",
     setupDesc: "Kadto ha Settings para pumili hin rehiyon ngan munisipyo",
+    chatbot: "Chatbot",
+  },
+  English: {
+    proceed: "Proceed",
+    selectLang: "Select Language",
+    selectLoc: "Select Your Location",
+    selectRegion: "Select Region",
+    selectMunicipality: "Select Municipality",
+    welcome: "Welcome",
+    tagline: "Farmer's Guide",
+    home: "Home",
+    subsidiesLabel: "Subsidies",
+    supportLabel: "Support",
+    advisories: "Advisories",
+    weatherTitle: "Weather Forecast",
+    alertTitle: "RED ALERT",
+    alertMsg: "Armyworm infestation reported in nearby town. Check your crops.",
+    dismiss: "Dismiss",
+    calendarTitle: "Recommendations for this Month",
+    calendarBody: "Best to plant Pagasa Rice Varieties. Prepare soil and seeds before the rains.",
+    searchPlaceholder: "RSBSA number or crop type...",
+    active: "Active",
+    upcoming: "Upcoming",
+    completed: "Completed",
+    disclaimer: "Verify with your local technician",
+    dataAs: "Data as of",
+    tapCall: "Tap to Call",
+    maoHeader: "Local Office",
+    maoSubhead: "Contact your local MAO directly",
+    requirements: "Requirements",
+    deadline: "Deadline",
+    status: "Status",
+    noResults: "No results found. Try a different term.",
+    morning: "Good Morning",
+    afternoon: "Good Afternoon",
+    evening: "Good Evening",
+    today: "Today",
+    activeSubsidies: "Active Subsidies",
+    noAlerts: "No Active Alerts",
+    quickSubsidies: "Subsidies",
+    quickSupport: "Support",
+    quickCalendar: "Calendar",
+    setupPrompt: "Set Your Location",
+    setupDesc: "Go to Settings to select region and municipality",
     chatbot: "Chatbot",
   },
 };

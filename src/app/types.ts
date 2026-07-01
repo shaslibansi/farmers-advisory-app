@@ -1,4 +1,4 @@
-export type Language = "Tagalog" | "Ilocano" | "Hiligaynon" | "Cebuano" | "Bikol" | "Waray";
+export type Language = "Tagalog" | "Ilocano" | "Hiligaynon" | "Cebuano" | "Bikol" | "Waray" | "English";
 export type Screen = "dashboard" | "subsidies" | "support" | "settings" | "chatbot";
 export type SubsidyTab = "active" | "upcoming" | "completed";
 export type StatusType = "green" | "yellow" | "blue" | "red" | "gray";
