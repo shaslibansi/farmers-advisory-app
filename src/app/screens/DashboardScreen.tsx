@@ -40,8 +40,6 @@ export default function DashboardScreen({
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherError, setWeatherError] = useState(false);
 
-  const activeCount = SUBSIDIES.active.length;
-  const upcomingCount = SUBSIDIES.upcoming.length;
   const hasLocation = municipality || region;
   const greeting = getGreeting(t);
 
@@ -117,34 +115,6 @@ export default function DashboardScreen({
             <Bell className="w-3.5 h-3.5" />
             {t.noAlerts}
           </button>
-        )}
-
-        {hasLocation && (
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={() => setScreen("subsidies")}
-              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
-            >
-              <Sprout className="w-5 h-5 text-[#0f6b3a]" />
-              <p className="text-lg md:text-2xl font-bold text-[#111827]">{activeCount}</p>
-              <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">{t.activeSubsidies}</p>
-            </button>
-
-            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm">
-              <Bell className="w-5 h-5 text-amber-600" />
-              <p className="text-lg md:text-2xl font-bold text-[#111827]">{!alertDismissed ? 1 : 0}</p>
-              <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">Alerto</p>
-            </div>
-
-            <button
-              onClick={() => setScreen("subsidies")}
-              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
-            >
-              <Calendar className="w-5 h-5 text-blue-600" />
-              <p className="text-lg md:text-2xl font-bold text-[#111827]">{upcomingCount}</p>
-              <p className="text-[10px] md:text-xs text-[#6b7280] font-medium mt-0.5">{t.upcoming}</p>
-            </button>
-          </div>
         )}
 
         {hasLocation && (
