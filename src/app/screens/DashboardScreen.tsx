@@ -188,19 +188,21 @@ export default function DashboardScreen({
               <h3 className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">{t.weatherTitle}</h3>
 
               {weatherLoading && (
-                <div className="space-y-3">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="rounded-2xl bg-white border border-[#e5e7eb] p-4 animate-pulse">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#e5e7eb]" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-[#e5e7eb] rounded w-1/3" />
-                          <div className="h-3 bg-[#e5e7eb] rounded w-1/2" />
+                <div className="bg-[#1e2330] rounded-2xl p-4 shadow-md animate-pulse">
+                  <div className="flex gap-3 overflow-hidden">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div key={i} className="flex flex-col items-center min-w-[70px] flex-1">
+                        <div className="h-3 w-8 bg-slate-700/50 rounded mb-2" />
+                        <div className={`w-full flex flex-col items-center justify-between rounded-xl py-3 px-2 ${
+                          i === 0 ? "bg-slate-800/40 border border-slate-700" : ""
+                        }`}>
+                          <div className="h-3 w-6 bg-slate-700 rounded mb-2.5" />
+                          <div className="w-8 h-8 rounded-full bg-slate-700 mb-3" />
+                          <div className="h-3 w-10 bg-slate-700 rounded" />
                         </div>
-                        <div className="h-6 w-14 bg-[#e5e7eb] rounded" />
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -218,47 +220,66 @@ export default function DashboardScreen({
               )}
 
               {!weatherLoading && !weatherError && weather.length === 0 && municipality && (
-                <div className="bg-white border border-[#e5e7eb] rounded-2xl p-4 text-center shadow-sm">
-                  <p className="text-xs text-[#6b7280]">No weather data available</p>
+                <div className="bg-[#1e2330] rounded-2xl p-4 text-center shadow-sm">
+                  <p className="text-xs text-slate-400">No weather data available</p>
                 </div>
               )}
 
               {!weatherLoading && !weatherError && weather.length > 0 && (
-                <div className="space-y-3">
-                  {weather.map((w, i) => (
-                    <div
-                      key={w.day}
-                      className={`rounded-2xl border shadow-sm transition-shadow ${
-                        i === 0
-                          ? "bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] border-transparent p-4 md:p-5"
-                          : "bg-white border-[#e5e7eb] p-3 md:p-4"
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className={`${i === 0 ? "text-3xl md:text-4xl" : "text-2xl md:text-3xl"}`}>{w.icon}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className={`font-semibold ${i === 0 ? "text-white" : "text-[#111827]"}`}>
-                              {i === 0 ? t.today : w.day}
-                            </p>
-                            <p className={`font-bold ${i === 0 ? "text-white text-2xl md:text-3xl" : "text-[#111827] text-lg md:text-xl"}`}>
-                              {w.temp}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <p className={`text-xs ${i === 0 ? "text-green-200" : "text-[#6b7280]"}`}>{w.desc}</p>
-                            {w.warn && (
-                              <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                i === 0 ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800"
-                              }`}>
-                                ⚠️ Alerto
+                <div className="bg-[#1e2330] rounded-2xl p-4 shadow-md">
+                  <div className="flex overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-1 pb-1 no-scrollbar">
+                    {weather.map((w, i) => {
+                      const dateObj = new Date(w.day);
+                      const weekday = isNaN(dateObj.getTime())
+                        ? w.day
+                        : dateObj.toLocaleDateString("en-US", { weekday: "short" });
+
+                      const currentHour = new Date().getHours();
+                      const startHour = Math.round(currentHour / 3) * 3;
+                      const hourVal = (startHour + i * 3) % 24;
+                      const ampm = hourVal >= 12 ? "PM" : "AM";
+                      const displayHour = hourVal % 12 === 0 ? 12 : hourVal % 12;
+                      const timeLabel = `${displayHour} ${ampm}`;
+
+                      const isActive = i === 0;
+                      const max = w.maxTemp ?? 0;
+                      const min = w.minTemp ?? 0;
+
+                      return (
+                        <div key={w.day} className="flex flex-col items-center min-w-0 flex-1">
+                          <span className="text-[10px] md:text-[11px] font-medium text-slate-400 mb-1.5 text-center truncate w-full">
+                            {timeLabel}
+                          </span>
+                          <div
+                            className={`w-full flex flex-col items-center justify-between rounded-xl py-2.5 px-1 transition-all ${
+                              isActive
+                                ? "bg-[#252b36] border border-slate-600/50 shadow-inner"
+                                : "bg-transparent border border-transparent"
+                            }`}
+                          >
+                            <span
+                              className={`text-[11px] md:text-xs font-semibold mb-1.5 ${
+                                isActive ? "text-white" : "text-slate-300"
+                              }`}
+                            >
+                              {weekday}
+                            </span>
+                            <span className="text-xl md:text-2xl mb-2 filter drop-shadow-sm select-none">
+                              {w.icon}
+                            </span>
+                            <div className="text-[10px] md:text-[11px] font-semibold flex gap-1 justify-center w-full truncate">
+                              <span className={isActive ? "text-white" : "text-slate-300"}>
+                                {max}°
                               </span>
-                            )}
+                              <span className={isActive ? "text-slate-400" : "text-slate-500"}>
+                                {min}°
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </section>
