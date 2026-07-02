@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, FileText, Headphones, Settings, MapPin, Sprout, MessageCircle, Menu, X } from "lucide-react";
+import { Home, FileText, Headphones, Settings, MapPin, Sprout, MessageCircle, Menu, X, Bell } from "lucide-react";
 import type { Screen } from "../types";
 
 // ── Shared nav items ──────────────────────────────────────────
@@ -135,7 +135,8 @@ export default function Sidebar({
   return (
     <>
       {/* ── Mobile top AppBar ─────────────────────────────── */}
-      <header className="md:hidden fixed top-0 inset-x-0 z-40 flex items-center gap-3 bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] px-4 py-3 shadow-md">
+      <header className="md:hidden fixed top-0 inset-x-0 z-40 flex items-center bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] px-3 py-3 shadow-md">
+        {/* Left — hamburger */}
         <button
           onClick={() => setDrawerOpen(true)}
           aria-label="Open menu"
@@ -143,11 +144,27 @@ export default function Sidebar({
         >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="flex items-center gap-2.5 flex-1">
-          <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center">
-            <Sprout className="w-4 h-4 text-white" />
+
+        {/* Centre — branding (absolute so it's truly centred regardless of button widths) */}
+        <div className="absolute inset-x-0 flex justify-center items-center pointer-events-none">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-white/20 flex items-center justify-center">
+              <Sprout className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="text-white font-bold text-base tracking-tight">FieldLink</span>
           </div>
-          <span className="text-white font-bold text-base tracking-tight">FieldLink</span>
+        </div>
+
+        {/* Right — notification bell */}
+        <div className="ml-auto relative">
+          <button
+            aria-label="Notifications"
+            className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors relative"
+          >
+            <Bell className="w-5 h-5" />
+            {/* red dot badge */}
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full ring-2 ring-[#0f6b3a]" />
+          </button>
         </div>
       </header>
 

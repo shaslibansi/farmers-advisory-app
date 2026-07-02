@@ -79,41 +79,6 @@ export default function DashboardScreen({
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-0">
-      <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-5 md:px-8 md:pt-6 md:pb-6 shadow-sm">
-        <div className="flex items-start justify-between">
-          <div className="min-w-0 flex-1">
-            {hasLocation ? (
-              <>
-                <div className="flex items-center gap-1.5 mb-1">
-                  <MapPin className="w-3.5 h-3.5 text-green-300 shrink-0" />
-                  <span className="text-green-200 text-xs md:text-sm font-medium truncate">{municipality || region}</span>
-                </div>
-                <h2 className="text-white text-lg md:text-xl font-bold leading-tight">
-                  {greeting}!
-                </h2>
-                <p className="text-green-200 text-xs md:text-sm mt-0.5">{formattedDate()}</p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-white text-lg md:text-xl font-bold leading-tight">
-                  {greeting}!
-                </h2>
-                <p className="text-green-200 text-xs md:text-sm mt-0.5">{t.selectLoc}</p>
-              </>
-            )}
-          </div>
-          <button
-            onClick={() => setAlertDismissed(false)}
-            className="mt-1 relative p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors backdrop-blur-sm shrink-0"
-            aria-label="View alerts"
-          >
-            <Bell className="w-5 h-5 text-white" />
-            {!alertDismissed && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full ring-2 ring-[#0f6b3a]" />
-            )}
-          </button>
-        </div>
-      </div>
 
       <div className="px-4 py-4 md:px-8 md:py-6 space-y-4 md:space-y-6">
         {!hasLocation && (
