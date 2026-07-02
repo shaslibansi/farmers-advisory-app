@@ -21,6 +21,7 @@ export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, s
   const [tab, setTab] = useState<SubsidyTab>(initialTab ?? "active");
   const [query, setQuery] = useState("");
   const [disclaimerShown, setDisclaimerShown] = useState(false);
+  const [isRotating, setIsRotating] = useState(false);
 
   const items = SUBSIDIES[tab];
   const filtered = useMemo(() => {
@@ -123,18 +124,20 @@ export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, s
         )}
       </div>
 
-      <div className="px-4 py-2 md:px-8 bg-transparent flex justify-center">
+      <div className="px-4 py-3 md:px-8 bg-transparent flex justify-center mt-2">
         <button
           onClick={() => {
+            setIsRotating(true);
+            setTimeout(() => setIsRotating(false), 800);
             if (!disclaimerShown) {
               setDisclaimerShown(true);
               alert("Verify with your local technician for accurate and updated information.");
             }
           }}
-          className="w-full flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl p-3 md:max-w-lg shadow-sm text-left cursor-pointer hover:bg-red-100/50 transition-colors active:scale-[0.99]"
+          className="flex items-center gap-2 bg-transparent text-[#111827] hover:text-[#374151] transition-colors focus:outline-none cursor-pointer select-none"
         >
-          <RefreshCw className="w-3.5 h-3.5 text-red-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-red-700">
+          <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${isRotating ? "animate-spin" : ""}`} />
+          <p className="text-xs text-[#111827]">
             <span className="font-semibold">{t.dataAs} {formattedDate()}.</span> {t.disclaimer}.
           </p>
         </button>
