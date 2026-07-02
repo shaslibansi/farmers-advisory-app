@@ -121,7 +121,9 @@ export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, s
             ))}
           </div>
         )}
+      </div>
 
+      <div className="px-4 py-2 md:px-8 bg-transparent flex justify-center">
         <button
           onClick={() => {
             if (!disclaimerShown) {
@@ -129,10 +131,10 @@ export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, s
               alert("Verify with your local technician for accurate and updated information.");
             }
           }}
-          className="w-full flex items-start gap-2 bg-[#0f6b3a]/10 border border-[#1a8a4a] rounded-xl p-3 md:max-w-lg shadow-sm text-left cursor-pointer hover:bg-[#0f6b3a]/20 transition-colors active:scale-[0.99]"
+          className="w-full flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl p-3 md:max-w-lg shadow-sm text-left cursor-pointer hover:bg-red-100/50 transition-colors active:scale-[0.99]"
         >
-          <RefreshCw className="w-3.5 h-3.5 text-[#0f6b3a] shrink-0 mt-0.5" />
-          <p className="text-xs text-[#0f6b3a]">
+          <RefreshCw className="w-3.5 h-3.5 text-red-600 shrink-0 mt-0.5" />
+          <p className="text-xs text-red-700">
             <span className="font-semibold">{t.dataAs} {formattedDate()}.</span> {t.disclaimer}.
           </p>
         </button>
