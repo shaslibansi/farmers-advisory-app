@@ -19,7 +19,7 @@ export default function SettingsScreen({
   const municipalities = MUNICIPALITIES[region] ?? [];
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-0">
+    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-6">
       <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-4 md:px-8 md:pt-6 md:pb-5 flex items-center gap-3 shadow-sm">
         <button onClick={onBack} className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-colors">
           <ArrowLeft className="w-5 h-5 text-white" />

@@ -175,8 +175,7 @@ export default function DashboardScreen({
             </section>
 
             <section className="bg-white border border-[#e5e7eb] rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl md:text-2xl">📅</span>
+              <div className="mb-3">
                 <h3 className="text-sm md:text-base font-bold text-[#0f6b3a]">{t.calendarTitle}</h3>
               </div>
               <p className="text-sm md:text-base text-[#111827] leading-relaxed">{t.calendarBody}</p>
@@ -198,35 +197,28 @@ export default function DashboardScreen({
             </section>
           </div>
         )}
+      </div>
 
-
-
-        {hasLocation && (
-          <div className="grid grid-cols-3 gap-3">
+      {hasLocation && (
+        <div className="fixed bottom-0 inset-x-0 z-30 bg-white/90 backdrop-blur-lg border-t border-border px-4 py-3 md:hidden">
+          <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto">
             <button
               onClick={() => setScreen("subsidies")}
-              className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              className="flex flex-col items-center gap-1 active:scale-[0.97] transition-transform"
             >
-              <Sprout className="w-5 h-5 text-[#0f6b3a]" />
-              <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickSubsidies}</span>
+              <Sprout className="w-5 h-5 text-[#111827]" />
+              <span className="text-[10px] font-semibold text-[#111827]">{t.quickSubsidies}</span>
             </button>
             <button
               onClick={() => setScreen("support")}
-              className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              className="flex flex-col items-center gap-1 active:scale-[0.97] transition-transform"
             >
-              <Phone className="w-5 h-5 text-blue-600" />
-              <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickSupport}</span>
-            </button>
-            <button
-              onClick={() => setScreen("subsidies")}
-              className="flex flex-col items-center gap-1.5 bg-white border border-[#e5e7eb] rounded-2xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-            >
-              <Calendar className="w-5 h-5 text-amber-600" />
-              <span className="text-[10px] md:text-xs font-semibold text-[#111827]">{t.quickCalendar}</span>
+              <Phone className="w-5 h-5 text-[#111827]" />
+              <span className="text-[10px] font-semibold text-[#111827]">{t.quickSupport}</span>
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

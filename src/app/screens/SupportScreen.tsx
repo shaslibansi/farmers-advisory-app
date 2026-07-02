@@ -95,7 +95,7 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-6">
+    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-6">
       {/* ── Top Header & Tab Pills ─────────────────────────── */}
       <div className="bg-white border-b border-[#e5e7eb] px-4 py-5 md:px-8 md:py-6">
         <div className="max-w-4xl mx-auto flex flex-row items-center justify-between gap-4 flex-wrap">

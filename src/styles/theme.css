@@ -136,7 +136,9 @@
   }
 
   html {
-    font-size: var(--font-size);
+    /* Fluid base: 14px @ 360px viewport → 18px @ 1280px viewport.
+       Everything that uses rem/em scales automatically with this. */
+    font-size: clamp(14px, calc(14px + (18 - 14) * ((100vw - 360px) / (1280 - 360))), 18px);
   }
 
   h1 {
