@@ -58,6 +58,7 @@ export default function DashboardScreen({
   const [weatherError, setWeatherError] = useState(false);
   const [chartTab, setChartTab] = useState<ChartTab>("temperature");
   const [unit, setUnit] = useState<"C" | "F">("C");
+  const [showAlert, setShowAlert] = useState(false);
 
   const activeCount = SUBSIDIES.active.length;
   const upcomingCount = SUBSIDIES.upcoming.length;
@@ -129,23 +130,36 @@ export default function DashboardScreen({
 
         {/* ── Metric cards ── */}
         {hasLocation && (
-          <div className="grid grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-3 gap-3">
             <button onClick={() => setScreen("subsidies")}
-              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
-              <Sprout className="w-4 h-4 text-[#0f6b3a] mb-1" />
-              <p className="text-base font-bold text-[#111827]">{activeCount}</p>
-              <p className="text-[10px] text-[#6b7280] font-medium">{t.activeSubsidies}</p>
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[110px] group active:scale-[0.98]">
+              <div>
+                <p className="text-3xl font-extrabold text-[#0f6b3a] group-hover:scale-105 transition-transform origin-left">{activeCount}</p>
+                <p className="text-xs font-bold text-[#1f2937] mt-1 leading-snug">{t.activeSubsidies}</p>
+              </div>
+              <span className="text-[10px] text-[#0f6b3a] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                {t.tapToView} <ChevronRight className="w-3 h-3" />
+              </span>
             </button>
-            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm">
-              <span className="text-base">🔔</span>
-              <p className="text-base font-bold text-[#111827]">1</p>
-              <p className="text-[10px] text-[#6b7280] font-medium">Alerto</p>
-            </div>
+            <button onClick={() => setShowAlert(true)}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[110px] group active:scale-[0.98]">
+              <div>
+                <p className="text-3xl font-extrabold text-[#dc2626] group-hover:scale-105 transition-transform origin-left">1</p>
+                <p className="text-xs font-bold text-[#1f2937] mt-1 leading-snug">{t.alerts}</p>
+              </div>
+              <span className="text-[10px] text-[#dc2626] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                {t.tapToView} <ChevronRight className="w-3 h-3" />
+              </span>
+            </button>
             <button onClick={() => setScreen("subsidies")}
-              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
-              <span className="text-base">📅</span>
-              <p className="text-base font-bold text-[#111827]">{upcomingCount}</p>
-              <p className="text-[10px] text-[#6b7280] font-medium">{t.upcoming}</p>
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[110px] group active:scale-[0.98]">
+              <div>
+                <p className="text-3xl font-extrabold text-[#1e3a8a] group-hover:scale-105 transition-transform origin-left">{upcomingCount}</p>
+                <p className="text-xs font-bold text-[#1f2937] mt-1 leading-snug">{t.upcoming}</p>
+              </div>
+              <span className="text-[10px] text-[#1e3a8a] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                {t.tapToView} <ChevronRight className="w-3 h-3" />
+              </span>
             </button>
           </div>
         )}
@@ -314,12 +328,31 @@ export default function DashboardScreen({
             <button onClick={() => setScreen("support")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm flex items-center gap-3 hover:shadow-md transition-all">
               <Phone className="w-5 h-5 text-[#0f6b3a] shrink-0" />
-              <span className="text-sm font-semibold text-[#111827]">{t.quickSupport}</span>
+              <span className="text-sm font-semibold text-[#111827]">Emergency</span>
             </button>
           </div>
         )}
 
       </div>
+
+      {/* ── Alert Modal ── */}
+      {showAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-red-100 transform transition-all animate-scale-up">
+            <div className="flex items-center gap-3 text-[#b91c1c] mb-3">
+              <span className="text-2xl">🚨</span>
+              <h4 className="text-lg font-bold uppercase tracking-wide">{t.alertTitle}</h4>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed mb-6">{t.alertMsg}</p>
+            <button
+              onClick={() => setShowAlert(false)}
+              className="w-full bg-[#0f6b3a] hover:bg-[#1a8a4a] text-white text-sm font-semibold py-3 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              {t.dismiss}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

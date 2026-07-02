@@ -56,6 +56,8 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Itakda ang Iyong Lokasyon",
     setupDesc: "Pumunta sa Settings para pumili ng rehiyon at munisipyo",
     chatbot: "Chatbot",
+    alerts: "Alerto",
+    tapToView: "I-tap para tingnan",
   },
   Ilocano: {
     proceed: "Rumwar / Ituloy",
@@ -100,6 +102,8 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Iset ti Lokasyonmo",
     setupDesc: "Mapanka iti Settings tapno pumili iti rehiyon ken munisipyo",
     chatbot: "Chatbot",
+    alerts: "Alerto",
+    tapToView: "I-tap tapno makita",
   },
   Hiligaynon: {
     proceed: "Sige / Magpadayon",
@@ -144,6 +148,8 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Iset ang Imo Lokasyon",
     setupDesc: "Kadto sa Settings para pumili sang rehiyon kag munisipyo",
     chatbot: "Chatbot",
+    alerts: "Alerto",
+    tapToView: "I-tap para makita",
   },
   Cebuano: {
     proceed: "Sige / Padayon",
@@ -188,6 +194,8 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Iset ang Imong Lokasyon",
     setupDesc: "Adto sa Settings aron mopili og rehiyon ug munisipyo",
     chatbot: "Chatbot",
+    alerts: "Alerto",
+    tapToView: "I-tap aron makita",
   },
   Bikol: {
     proceed: "Sige / Magpadagos",
@@ -232,6 +240,8 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Itakda an Saindong Lokasyon",
     setupDesc: "Duman sa Settings para pumili nin rehiyon asin munisipyo",
     chatbot: "Chatbot",
+    alerts: "Alerto",
+    tapToView: "I-tap para makita",
   },
   Waray: {
     proceed: "Sige / Padayon",
@@ -276,6 +286,8 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Ibutang an Imo Lokasyon",
     setupDesc: "Kadto ha Settings para pumili hin rehiyon ngan munisipyo",
     chatbot: "Chatbot",
+    alerts: "Alerto",
+    tapToView: "I-tap para makita",
   },
   English: {
     proceed: "Proceed",
@@ -320,5 +332,7 @@ export const T: Record<Language, Record<string, string>> = {
     setupPrompt: "Set Your Location",
     setupDesc: "Go to Settings to select region and municipality",
     chatbot: "Chatbot",
+    alerts: "Alerts",
+    tapToView: "Tap to view",
   },
 };
