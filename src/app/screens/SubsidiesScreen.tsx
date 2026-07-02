@@ -96,7 +96,6 @@ export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, s
             {filtered.map((s) => (
               <div key={s.name} className="bg-white border border-[#e5e7eb] rounded-2xl p-4 space-y-2.5 shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl shrink-0">{s.icon}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-[#111827] leading-snug">{s.name}</p>
                     <p className="text-xs text-[#6b7280] mt-0.5">{s.commodity}</p>
