@@ -38,17 +38,14 @@ function NavItems({
             <button
               key={key}
               onClick={() => go(key)}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-xl ${
                 isActive
-                  ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#0f6b3a]/15 to-white text-[#0f6b3a] shadow-sm"
-                  : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
+                  ? "bg-[#0f6b3a]/10 text-[#0f6b3a]"
+                  : "text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
               }`}
             >
-              <div className={`p-1.5 rounded-lg transition-colors ${isActive ? "bg-[#0f6b3a]/10" : ""}`}>
-                <Icon className={`w-4 h-4 ${isActive ? "text-[#0f6b3a]" : ""}`} />
-              </div>
+              <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-[#0f6b3a]" : ""}`} />
               <span className="flex-1 text-left">{label}</span>
-              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#0f6b3a]" />}
             </button>
           );
         })}
@@ -60,17 +57,14 @@ function NavItems({
       <div className="px-3 pb-3 space-y-0.5">
         <button
           onClick={() => go("settings")}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
+          className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-xl ${
             screen === "settings"
-              ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#0f6b3a]/15 to-white text-[#0f6b3a] shadow-sm"
-              : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
+              ? "bg-[#0f6b3a]/10 text-[#0f6b3a]"
+              : "text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
           }`}
         >
-          <div className={`p-1.5 rounded-lg transition-colors ${screen === "settings" ? "bg-[#0f6b3a]/10" : ""}`}>
-            <Settings className="w-4 h-4" />
-          </div>
+          <Settings className="w-4 h-4 shrink-0" />
           <span className="flex-1 text-left">Settings</span>
-          {screen === "settings" && <span className="w-1.5 h-1.5 rounded-full bg-[#0f6b3a]" />}
         </button>
       </div>
     </>

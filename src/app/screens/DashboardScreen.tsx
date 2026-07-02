@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MapPin, ChevronRight, Sprout, Calendar, Phone, RefreshCw } from "lucide-react";
+import { MapPin, ChevronRight, Sprout, Phone, RefreshCw } from "lucide-react";
 import { fetchWeather } from "../data/weather";
 import type { Screen, WeatherDay } from "../types";
 
