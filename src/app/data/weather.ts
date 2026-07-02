@@ -63,7 +63,7 @@ export async function fetchWeather(city: string): Promise<WeatherDay[]> {
 
   const res = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}` +
-    `&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia/Manila&forecast_days=8`,
+    `&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia/Manila&forecast_days=7`,
     { signal: AbortSignal.timeout(8000) },
   );
 

@@ -188,17 +188,17 @@ export default function DashboardScreen({
               <h3 className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">{t.weatherTitle}</h3>
 
               {weatherLoading && (
-                <div className="bg-[#1e2330] rounded-2xl p-4 shadow-md animate-pulse">
+                <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] rounded-2xl p-4 shadow-md animate-pulse">
                   <div className="flex gap-3 overflow-hidden">
-                    {Array.from({ length: 8 }).map((_, i) => (
+                    {Array.from({ length: 7 }).map((_, i) => (
                       <div key={i} className="flex flex-col items-center min-w-[70px] flex-1">
-                        <div className="h-3 w-8 bg-slate-700/50 rounded mb-2" />
+                        <div className="h-3 w-8 bg-green-300/30 rounded mb-2" />
                         <div className={`w-full flex flex-col items-center justify-between rounded-xl py-3 px-2 ${
-                          i === 0 ? "bg-slate-800/40 border border-slate-700" : ""
+                          i === 0 ? "bg-white/15 border border-white/20" : ""
                         }`}>
-                          <div className="h-3 w-6 bg-slate-700 rounded mb-2.5" />
-                          <div className="w-8 h-8 rounded-full bg-slate-700 mb-3" />
-                          <div className="h-3 w-10 bg-slate-700 rounded" />
+                          <div className="h-3 w-6 bg-green-300/30 rounded mb-2.5" />
+                          <div className="w-8 h-8 rounded-full bg-green-300/30 mb-3" />
+                          <div className="h-3 w-10 bg-green-300/30 rounded" />
                         </div>
                       </div>
                     ))}
@@ -220,13 +220,13 @@ export default function DashboardScreen({
               )}
 
               {!weatherLoading && !weatherError && weather.length === 0 && municipality && (
-                <div className="bg-[#1e2330] rounded-2xl p-4 text-center shadow-sm">
-                  <p className="text-xs text-slate-400">No weather data available</p>
+                <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] rounded-2xl p-4 text-center shadow-sm">
+                  <p className="text-xs text-green-200">No weather data available</p>
                 </div>
               )}
 
               {!weatherLoading && !weatherError && weather.length > 0 && (
-                <div className="bg-[#1e2330] rounded-2xl p-4 shadow-md">
+                <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] rounded-2xl p-4 shadow-md">
                   <div className="flex overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-1 pb-1 no-scrollbar">
                     {weather.map((w, i) => {
                       const dateObj = new Date(w.day);
@@ -247,19 +247,16 @@ export default function DashboardScreen({
 
                       return (
                         <div key={w.day} className="flex flex-col items-center min-w-0 flex-1">
-                          <span className="text-[10px] md:text-[11px] font-medium text-slate-400 mb-1.5 text-center truncate w-full">
-                            {timeLabel}
-                          </span>
                           <div
                             className={`w-full flex flex-col items-center justify-between rounded-xl py-2.5 px-1 transition-all ${
                               isActive
-                                ? "bg-[#252b36] border border-slate-600/50 shadow-inner"
-                                : "bg-transparent border border-transparent"
+                                ? "bg-white/15 border border-white/25 shadow-inner"
+                                : "bg-transparent border border-transparent hover:bg-white/5"
                             }`}
                           >
                             <span
                               className={`text-[11px] md:text-xs font-semibold mb-1.5 ${
-                                isActive ? "text-white" : "text-slate-300"
+                                isActive ? "text-white" : "text-green-100"
                               }`}
                             >
                               {weekday}
@@ -268,10 +265,10 @@ export default function DashboardScreen({
                               {w.icon}
                             </span>
                             <div className="text-[10px] md:text-[11px] font-semibold flex gap-1 justify-center w-full truncate">
-                              <span className={isActive ? "text-white" : "text-slate-300"}>
+                              <span className={isActive ? "text-white font-bold" : "text-green-100"}>
                                 {max}°
                               </span>
-                              <span className={isActive ? "text-slate-400" : "text-slate-500"}>
+                              <span className={isActive ? "text-green-200" : "text-green-300/60"}>
                                 {min}°
                               </span>
                             </div>
