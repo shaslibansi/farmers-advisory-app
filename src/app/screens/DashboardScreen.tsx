@@ -134,31 +134,31 @@ export default function DashboardScreen({
             <button onClick={() => setScreen("subsidies")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[110px] group active:scale-[0.98]">
               <div>
-                <p className="text-3xl font-extrabold text-[#0f6b3a] group-hover:scale-105 transition-transform origin-left">{activeCount}</p>
+                <p className="text-3xl font-extrabold text-[#111827] group-hover:scale-105 transition-transform origin-left">{activeCount}</p>
                 <p className="text-xs font-bold text-[#1f2937] mt-1 leading-snug">{t.activeSubsidies}</p>
               </div>
-              <span className="text-[10px] text-[#0f6b3a] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                {t.tapToView} <ChevronRight className="w-3 h-3" />
+              <span className="text-[10px] text-[#111827] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                {t.tapToView} <ChevronRight className="w-3 h-3 text-[#111827]" />
               </span>
             </button>
             <button onClick={() => setShowAlert(true)}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[110px] group active:scale-[0.98]">
               <div>
-                <p className="text-3xl font-extrabold text-[#dc2626] group-hover:scale-105 transition-transform origin-left">1</p>
+                <p className="text-3xl font-extrabold text-[#111827] group-hover:scale-105 transition-transform origin-left">1</p>
                 <p className="text-xs font-bold text-[#1f2937] mt-1 leading-snug">{t.alerts}</p>
               </div>
-              <span className="text-[10px] text-[#dc2626] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                {t.tapToView} <ChevronRight className="w-3 h-3" />
+              <span className="text-[10px] text-[#111827] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                {t.tapToView} <ChevronRight className="w-3 h-3 text-[#111827]" />
               </span>
             </button>
             <button onClick={() => setScreen("subsidies")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[110px] group active:scale-[0.98]">
               <div>
-                <p className="text-3xl font-extrabold text-[#1e3a8a] group-hover:scale-105 transition-transform origin-left">{upcomingCount}</p>
+                <p className="text-3xl font-extrabold text-[#111827] group-hover:scale-105 transition-transform origin-left">{upcomingCount}</p>
                 <p className="text-xs font-bold text-[#1f2937] mt-1 leading-snug">{t.upcoming}</p>
               </div>
-              <span className="text-[10px] text-[#1e3a8a] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                {t.tapToView} <ChevronRight className="w-3 h-3" />
+              <span className="text-[10px] text-[#111827] font-semibold mt-2 flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                {t.tapToView} <ChevronRight className="w-3 h-3 text-[#111827]" />
               </span>
             </button>
           </div>
@@ -300,7 +300,7 @@ export default function DashboardScreen({
             <h3 className="text-sm font-bold text-[#0f6b3a] mb-1">{t.calendarTitle}</h3>
             <p className="text-sm text-[#111827] leading-relaxed mb-3">{t.calendarBody}</p>
             <div className="space-y-2">
-              {["🌾 Pagasa 7", " NSIC Rc 222", " Tubigan 18"].map((v) => (
+              {["Pagasa 7", "NSIC Rc 222", "Tubigan 18"].map((v) => (
                 <div key={v} className="flex items-center gap-2 text-xs bg-[#0f6b3a] text-white font-semibold px-3 py-2 rounded-xl">
                   <Sprout className="w-3.5 h-3.5 shrink-0" />
                   {v}
