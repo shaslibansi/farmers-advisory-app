@@ -122,9 +122,9 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
           </div>
         )}
 
-        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 md:max-w-lg shadow-sm">
-          <RefreshCw className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-800">
+        <div className="flex items-start gap-2 bg-[#0f6b3a]/10 border border-[#1a8a4a] rounded-xl p-3 md:max-w-lg shadow-sm">
+          <RefreshCw className="w-3.5 h-3.5 text-[#0f6b3a] shrink-0 mt-0.5" />
+          <p className="text-xs text-[#0f6b3a]">
             <span className="font-semibold">{t.dataAs} {formattedDate()}.</span> {t.disclaimer}.
           </p>
         </div>
