@@ -152,7 +152,7 @@ export default function DashboardScreen({
 
         {/* ── Weather widget ── */}
         {hasLocation && (
-          <div className="bg-[#1a1a2e] rounded-3xl overflow-hidden shadow-xl">
+          <div className="bg-[#0a3d1f] rounded-3xl overflow-hidden shadow-xl">
 
             {/* Loading skeleton */}
             {weatherLoading && (

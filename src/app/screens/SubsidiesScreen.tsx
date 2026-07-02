@@ -20,6 +20,7 @@ function formattedDate() {
 export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
   const [tab, setTab] = useState<SubsidyTab>("active");
   const [query, setQuery] = useState("");
+  const [disclaimerShown, setDisclaimerShown] = useState(false);
 
   const items = SUBSIDIES[tab];
   const filtered = useMemo(() => {
@@ -122,12 +123,20 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
           </div>
         )}
 
-        <div className="flex items-start gap-2 bg-[#0f6b3a]/10 border border-[#1a8a4a] rounded-xl p-3 md:max-w-lg shadow-sm">
+        <button
+          onClick={() => {
+            if (!disclaimerShown) {
+              setDisclaimerShown(true);
+              alert("Verify with your local technician for accurate and updated information.");
+            }
+          }}
+          className="w-full flex items-start gap-2 bg-[#0f6b3a]/10 border border-[#1a8a4a] rounded-xl p-3 md:max-w-lg shadow-sm text-left cursor-pointer hover:bg-[#0f6b3a]/20 transition-colors active:scale-[0.99]"
+        >
           <RefreshCw className="w-3.5 h-3.5 text-[#0f6b3a] shrink-0 mt-0.5" />
           <p className="text-xs text-[#0f6b3a]">
             <span className="font-semibold">{t.dataAs} {formattedDate()}.</span> {t.disclaimer}.
           </p>
-        </div>
+        </button>
       </div>
     </div>
   );
