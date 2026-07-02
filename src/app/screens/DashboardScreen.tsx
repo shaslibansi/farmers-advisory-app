@@ -1,14 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MapPin, ChevronRight, Sprout, Phone, RefreshCw } from "lucide-react";
-import { fetchWeather } from "../data/weather";
-import type { Screen, WeatherDay } from "../types";
+import { fetchWeatherFull } from "../data/weather";
+import type { WeatherResult, HourlyPoint } from "../data/weather";
+import { SUBSIDIES } from "../data/subsidies";
+import type { Screen } from "../types";
 
-const MONTHS_FIL = [
-  "Enero", "Pebrero", "Marso", "Abril", "Mayo", "Hunyo",
-  "Hulyo", "Agosto", "Setyembre", "Oktubre", "Nobyembre", "Disyembre",
-];
+const DAYS_EN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-const DAYS_FIL = ["Linggo", "Lunes", "Martes", "Miyerkules", "Huwebes", "Biyernes", "Sabado"];
+/* ── tiny SVG line-chart ───────────────────────────────────────── */
+function TempChart({ points, color = "#f59e0b" }: { points: number[]; color?: string }) {
+  if (points.length < 2) return null;
+  const W = 600, H = 80, PAD = 8;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const xs = points.map((_, i) => PAD + (i / (points.length - 1)) * (W - PAD * 2));
+  const ys = points.map((v) => PAD + ((max - v) / range) * (H - PAD * 2));
+
+  const path = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x},${ys[i]}`).join(" ");
+  const fill = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x},${ys[i]}`).join(" ")
+    + ` L${xs[xs.length - 1]},${H} L${PAD},${H} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 80 }} preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.35" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.03" />
+        </linearGradient>
+      </defs>
+      <path d={fill} fill="url(#chartFill)" />
+      <path d={path} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      {/* value labels every ~3 points */}
+      {points.map((v, i) => {
+        if (i % 3 !== 0) return null;
+        return (
+          <text key={i} x={xs[i]} y={ys[i] - 5} textAnchor="middle"
+            fontSize="11" fill="rgba(255,255,255,0.75)" fontWeight="600">{v}</text>
+        );
+      })}
+    </svg>
+  );
+}
+
+type ChartTab = "temperature" | "precipitation" | "wind";
 
 export default function DashboardScreen({
   t, municipality, region, setScreen,
@@ -18,48 +53,66 @@ export default function DashboardScreen({
   region: string;
   setScreen: (s: Screen) => void;
 }) {
-  const [weather, setWeather] = useState<WeatherDay[]>([]);
+  const [weatherResult, setWeatherResult] = useState<WeatherResult | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherError, setWeatherError] = useState(false);
+  const [chartTab, setChartTab] = useState<ChartTab>("temperature");
+  const [unit, setUnit] = useState<"C" | "F">("C");
 
+  const activeCount = SUBSIDIES.active.length;
+  const upcomingCount = SUBSIDIES.upcoming.length;
   const hasLocation = municipality || region;
 
-  useEffect(() => {
+  function loadWeather() {
     if (!hasLocation) return;
-    let cancelled = false;
     setWeatherLoading(true);
     setWeatherError(false);
+    fetchWeatherFull(municipality || region)
+      .then((r) => { setWeatherResult(r); setWeatherLoading(false); })
+      .catch(() => { setWeatherError(true); setWeatherLoading(false); });
+  }
 
-    fetchWeather(municipality || region)
-      .then((data) => {
-        if (!cancelled) {
-          setWeather(data);
-          setWeatherLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setWeatherError(true);
-          setWeatherLoading(false);
-        }
-      });
-
+  useEffect(() => {
+    let cancelled = false;
+    if (!hasLocation) return;
+    setWeatherLoading(true);
+    setWeatherError(false);
+    fetchWeatherFull(municipality || region)
+      .then((r) => { if (!cancelled) { setWeatherResult(r); setWeatherLoading(false); } })
+      .catch(() => { if (!cancelled) { setWeatherError(true); setWeatherLoading(false); } });
     return () => { cancelled = true; };
   }, [municipality, region, hasLocation]);
 
-  function retryWeather() {
-    setWeatherError(false);
-    setWeatherLoading(true);
-    fetchWeather(municipality || region)
-      .then(setWeather)
-      .catch(() => setWeatherError(true))
-      .finally(() => setWeatherLoading(false));
-  }
+  const toF = (c: number) => Math.round(c * 9 / 5 + 32);
+  const displayTemp = (c: number) => unit === "C" ? c : toF(c);
+
+  // hourly chart series (8 AM → 10 PM, 8 points at 2h intervals)
+  const chartPoints = useMemo(() => {
+    const h = weatherResult?.hourly ?? [];
+    if (!h.length) return [] as number[];
+    // pick every 2h from 8:00 to 22:00
+    const slots = [8, 10, 12, 14, 16, 18, 20, 22];
+    return slots.map(hr => {
+      const pt = h.find(p => parseInt(p.time) === hr) ?? h[hr] ?? h[0];
+      if (chartTab === "temperature") return pt ? (unit === "C" ? pt.temp : toF(pt.temp)) : 0;
+      if (chartTab === "precipitation") return pt?.precip ?? 0;
+      return pt?.wind ?? 0;
+    });
+  }, [weatherResult, chartTab, unit]);
+
+  const chartColor = chartTab === "temperature" ? "#f59e0b" : chartTab === "precipitation" ? "#60a5fa" : "#34d399";
+
+  // time labels for chart x-axis
+  const timeLabels = ["8 AM","10 AM","12 PM","2 PM","4 PM","6 PM","8 PM","10 PM"];
+
+  const cur = weatherResult?.current;
+  const days = weatherResult?.days ?? [];
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-6">
+    <div className="flex-1 overflow-y-auto bg-[#f3f4f6] pb-6">
+      <div className="px-3 py-4 md:px-6 md:py-6 space-y-4">
 
-      <div className="px-4 py-4 md:px-8 md:py-6 space-y-4 md:space-y-6">
+        {/* ── No location prompt ── */}
         {!hasLocation && (
           <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5 shadow-sm text-center">
             <MapPin className="w-8 h-8 text-[#0f6b3a] mx-auto mb-2" />
@@ -67,167 +120,206 @@ export default function DashboardScreen({
             <p className="text-xs text-[#6b7280] mb-3">{t.setupDesc}</p>
             <button
               onClick={() => setScreen("settings")}
-              className="inline-flex items-center gap-1.5 bg-[#0f6b3a] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:shadow-md transition-all active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 bg-[#0f6b3a] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:shadow-md transition-all"
             >
-              <SettingsIcon />
               Settings
             </button>
           </div>
         )}
 
+        {/* ── Metric cards ── */}
         {hasLocation && (
-          <div className="md:grid md:grid-cols-2 md:gap-6 space-y-4 md:space-y-0">
-            <section>
-              <h3 className="text-xs font-semibold text-[#6b7280] uppercase tracking-widest mb-3">{t.weatherTitle}</h3>
+          <div className="grid grid-cols-3 gap-2.5">
+            <button onClick={() => setScreen("subsidies")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
+              <Sprout className="w-4 h-4 text-[#0f6b3a] mb-1" />
+              <p className="text-base font-bold text-[#111827]">{activeCount}</p>
+              <p className="text-[10px] text-[#6b7280] font-medium">{t.activeSubsidies}</p>
+            </button>
+            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm">
+              <span className="text-base">🔔</span>
+              <p className="text-base font-bold text-[#111827]">1</p>
+              <p className="text-[10px] text-[#6b7280] font-medium">Alerto</p>
+            </div>
+            <button onClick={() => setScreen("subsidies")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
+              <span className="text-base">📅</span>
+              <p className="text-base font-bold text-[#111827]">{upcomingCount}</p>
+              <p className="text-[10px] text-[#6b7280] font-medium">{t.upcoming}</p>
+            </button>
+          </div>
+        )}
 
-              {weatherLoading && (
-                <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] rounded-2xl p-4 shadow-md animate-pulse">
-                  <div className="flex gap-3 overflow-hidden">
-                    {Array.from({ length: 7 }).map((_, i) => (
-                      <div key={i} className="flex flex-col items-center min-w-[70px] flex-1">
-                        <div className="h-3 w-8 bg-white/20 rounded mb-2" />
-                        <div className={`w-full flex flex-col items-center justify-between rounded-xl py-3 px-2 ${
-                          i === 0 ? "bg-white/15 border border-white/20" : ""
-                        }`}>
-                          <div className="h-3 w-6 bg-white/20 rounded mb-2.5" />
-                          <div className="w-8 h-8 rounded-full bg-white/20 mb-3" />
-                          <div className="h-3 w-10 bg-white/20 rounded" />
+        {/* ── Weather widget ── */}
+        {hasLocation && (
+          <div className="bg-[#1a1a2e] rounded-3xl overflow-hidden shadow-xl">
+
+            {/* Loading skeleton */}
+            {weatherLoading && (
+              <div className="p-5 animate-pulse space-y-4">
+                <div className="flex justify-between">
+                  <div className="flex gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-white/10" />
+                    <div className="space-y-2 pt-1">
+                      <div className="w-20 h-6 bg-white/10 rounded" />
+                      <div className="w-32 h-3 bg-white/10 rounded" />
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <div className="w-20 h-5 bg-white/10 rounded ml-auto" />
+                    <div className="w-16 h-3 bg-white/10 rounded ml-auto" />
+                  </div>
+                </div>
+                <div className="w-full h-20 bg-white/10 rounded-xl" />
+                <div className="flex gap-2">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <div key={i} className="flex-1 h-16 bg-white/10 rounded-xl" />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Error state */}
+            {weatherError && (
+              <div className="p-6 text-center">
+                <p className="text-sm text-red-400 mb-3">Failed to load weather data</p>
+                <button onClick={loadWeather}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[#0f6b3a] px-4 py-2 rounded-xl">
+                  <RefreshCw className="w-3.5 h-3.5" /> Retry
+                </button>
+              </div>
+            )}
+
+            {/* Main weather content */}
+            {!weatherLoading && !weatherError && cur && (
+              <>
+                {/* ── Top row: current conditions ── */}
+                <div className="px-5 pt-5 pb-3 flex items-start justify-between gap-4">
+                  {/* Left: icon + temp + stats */}
+                  <div className="flex items-start gap-4">
+                    <span className="text-5xl leading-none select-none">{cur.icon}</span>
+                    <div>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-4xl font-bold text-white leading-none">
+                          {displayTemp(cur.temp)}
+                        </span>
+                        <div className="flex items-center gap-1 text-sm text-white/60 font-semibold">
+                          <button onClick={() => setUnit("C")}
+                            className={unit === "C" ? "text-white" : "hover:text-white/80"}>°C</button>
+                          <span>|</span>
+                          <button onClick={() => setUnit("F")}
+                            className={unit === "F" ? "text-white" : "hover:text-white/80"}>°F</button>
                         </div>
                       </div>
+                      <div className="mt-1.5 space-y-0.5 text-xs text-white/60">
+                        <p>Precipitation: <span className="text-white/85">{cur.precip}%</span></p>
+                        <p>Humidity: <span className="text-white/85">{cur.humidity}%</span></p>
+                        <p>Wind: <span className="text-white/85">{cur.wind} km/h</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: label */}
+                  <div className="text-right shrink-0">
+                    <p className="text-lg font-bold text-white">Weather</p>
+                    <p className="text-sm text-white/60">{cur.dayLabel}</p>
+                    <p className="text-sm text-white/60">{cur.desc}</p>
+                  </div>
+                </div>
+
+                {/* ── Chart tabs ── */}
+                <div className="px-5 flex gap-5 border-b border-white/10 text-sm font-semibold">
+                  {(["temperature","precipitation","wind"] as ChartTab[]).map((tab) => (
+                    <button key={tab} onClick={() => setChartTab(tab)}
+                      className={`pb-2 capitalize transition-colors border-b-2 -mb-px ${
+                        chartTab === tab
+                          ? "text-white border-[#f59e0b]"
+                          : "text-white/40 border-transparent hover:text-white/70"
+                      }`}>
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
+                </div>
+
+                {/* ── SVG chart ── */}
+                <div className="px-2 pt-3">
+                  <TempChart points={chartPoints} color={chartColor} />
+                  {/* X-axis time labels */}
+                  <div className="flex justify-between px-2 pb-1">
+                    {timeLabels.map((lbl) => (
+                      <span key={lbl} className="text-[10px] text-white/40">{lbl}</span>
                     ))}
                   </div>
                 </div>
-              )}
 
-              {weatherError && (
-                <div className="bg-white border border-red-200 rounded-2xl p-4 text-center shadow-sm">
-                  <p className="text-xs text-red-600 mb-2">Failed to load weather data</p>
-                  <button
-                    onClick={retryWeather}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-[#0f6b3a] px-3 py-1.5 rounded-xl hover:bg-[#1a8a4a] transition-colors"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    Retry
-                  </button>
+                {/* ── 7-day strip ── */}
+                <div className="flex border-t border-white/10 mt-1">
+                  {days.slice(0, 7).map((d, i) => {
+                    const dateObj = new Date(d.day);
+                    const dayName = isNaN(dateObj.getTime())
+                      ? d.day
+                      : dateObj.toLocaleDateString("en-US", { weekday: "short" });
+                    const isToday = i === 0;
+                    return (
+                      <div key={d.day}
+                        className={`flex-1 flex flex-col items-center py-3 gap-0.5 transition-colors ${
+                          isToday ? "bg-white/10" : "hover:bg-white/5"
+                        }`}>
+                        <span className={`text-[11px] font-bold ${isToday ? "text-white" : "text-white/55"}`}>
+                          {dayName}
+                        </span>
+                        <span className="text-xl leading-none select-none my-1">{d.icon}</span>
+                        <span className="text-[11px] font-semibold text-white">{displayTemp(d.maxTemp ?? 0)}°</span>
+                        <span className="text-[10px] text-white/45">{displayTemp(d.minTemp ?? 0)}°</span>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-
-              {!weatherLoading && !weatherError && weather.length === 0 && municipality && (
-                <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] rounded-2xl p-4 text-center shadow-sm">
-                  <p className="text-xs text-green-200">No weather data available</p>
-                </div>
-              )}
-
-              {!weatherLoading && !weatherError && weather.length > 0 && (
-                <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] rounded-2xl p-4 shadow-md">
-                  <div className="flex overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-1 pb-1 no-scrollbar">
-                    {weather.map((w, i) => {
-                      const dateObj = new Date(w.day);
-                      const weekday = isNaN(dateObj.getTime())
-                        ? w.day
-                        : dateObj.toLocaleDateString("en-US", { weekday: "short" });
-
-                      const currentHour = new Date().getHours();
-                      const startHour = Math.round(currentHour / 3) * 3;
-                      const hourVal = (startHour + i * 3) % 24;
-                      const ampm = hourVal >= 12 ? "PM" : "AM";
-                      const displayHour = hourVal % 12 === 0 ? 12 : hourVal % 12;
-                      const timeLabel = `${displayHour} ${ampm}`;
-
-                      const isActive = i === 0;
-                      const max = w.maxTemp ?? 0;
-                      const min = w.minTemp ?? 0;
-
-                      return (
-                        <div key={w.day} className="flex flex-col items-center min-w-0 flex-1">
-                          <div
-                            className={`w-full flex flex-col items-center justify-between rounded-xl py-2.5 px-1 transition-all ${
-                              isActive
-                                ? "bg-white/15 border border-white/25 shadow-inner"
-                                : "bg-transparent border border-transparent hover:bg-white/5"
-                            }`}
-                          >
-                            <span
-                              className={`text-[11px] md:text-xs font-semibold mb-1.5 ${
-                                isActive ? "text-white" : "text-green-100"
-                              }`}
-                            >
-                              {weekday}
-                            </span>
-                            <span className="text-xl md:text-2xl mb-2 filter drop-shadow-sm select-none">
-                              {w.icon}
-                            </span>
-                            <div className="text-[10px] md:text-[11px] font-semibold flex gap-1 justify-center w-full truncate">
-                              <span className={isActive ? "text-white font-bold" : "text-green-100"}>
-                                {max}°
-                              </span>
-                              <span className={isActive ? "text-green-200" : "text-green-300/60"}>
-                                {min}°
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </section>
-
-            <section className="bg-white border border-[#e5e7eb] rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="mb-3">
-                <h3 className="text-sm md:text-base font-bold text-[#0f6b3a]">{t.calendarTitle}</h3>
-              </div>
-              <p className="text-sm md:text-base text-[#111827] leading-relaxed">{t.calendarBody}</p>
-              <div className="mt-4 space-y-2">
-                {["🌾 Pagasa 7", "🌾 NSIC Rc 222", "🌾 Tubigan 18"].map((v) => (
-                  <div key={v} className="flex items-center gap-2 text-xs bg-[#0f6b3a] text-white font-semibold px-3 py-2 rounded-xl border border-[#1a8a4a]">
-                    <Sprout className="w-3.5 h-3.5 shrink-0" />
-                    {v}
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => setScreen("subsidies")}
-                className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#0f6b3a] py-2.5 rounded-xl border border-[#1a8a4a] hover:bg-[#1a8a4a] transition-colors"
-              >
-                {t.quickSubsidies}
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </section>
+              </>
+            )}
           </div>
         )}
-      </div>
 
-      {hasLocation && (
-        <div className="fixed bottom-0 inset-x-0 z-30 bg-white/90 backdrop-blur-lg border-t border-border px-4 py-3 md:hidden">
-          <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto">
+        {/* ── Planting calendar card ── */}
+        {hasLocation && (
+          <div className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#0f6b3a] mb-1">{t.calendarTitle}</h3>
+            <p className="text-sm text-[#111827] leading-relaxed mb-3">{t.calendarBody}</p>
+            <div className="space-y-2">
+              {["🌾 Pagasa 7", "🌾 NSIC Rc 222", "🌾 Tubigan 18"].map((v) => (
+                <div key={v} className="flex items-center gap-2 text-xs bg-[#0f6b3a] text-white font-semibold px-3 py-2 rounded-xl">
+                  <Sprout className="w-3.5 h-3.5 shrink-0" />
+                  {v}
+                </div>
+              ))}
+            </div>
             <button
               onClick={() => setScreen("subsidies")}
-              className="flex flex-col items-center gap-1 active:scale-[0.97] transition-transform"
+              className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#0f6b3a] py-2.5 rounded-xl border border-[#1a8a4a] hover:bg-[#1a8a4a] transition-colors"
             >
-              <Sprout className="w-5 h-5 text-[#111827]" />
-              <span className="text-[10px] font-semibold text-[#111827]">{t.quickSubsidies}</span>
-            </button>
-            <button
-              onClick={() => setScreen("support")}
-              className="flex flex-col items-center gap-1 active:scale-[0.97] transition-transform"
-            >
-              <Phone className="w-5 h-5 text-[#111827]" />
-              <span className="text-[10px] font-semibold text-[#111827]">{t.quickSupport}</span>
+              {t.quickSubsidies}
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
+        )}
 
-function SettingsIcon() {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-    </svg>
+        {/* ── Quick actions (mobile) ── */}
+        {hasLocation && (
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={() => setScreen("subsidies")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm flex items-center gap-3 hover:shadow-md transition-all">
+              <Sprout className="w-5 h-5 text-[#0f6b3a] shrink-0" />
+              <span className="text-sm font-semibold text-[#111827]">{t.quickSubsidies}</span>
+            </button>
+            <button onClick={() => setScreen("support")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-4 shadow-sm flex items-center gap-3 hover:shadow-md transition-all">
+              <Phone className="w-5 h-5 text-[#0f6b3a] shrink-0" />
+              <span className="text-sm font-semibold text-[#111827]">{t.quickSupport}</span>
+            </button>
+          </div>
+        )}
+
+      </div>
+    </div>
   );
 }
