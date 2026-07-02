@@ -168,14 +168,9 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
                   >
                     <div className="p-5 flex-1 flex flex-col gap-4">
                       {/* Top Branding Row */}
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center shrink-0">
-                          <Building2 className="w-5 h-5 text-[#0f6b3a]" />
-                        </div>
-                        <div className="min-w-0">
-                          <h4 className="text-sm font-bold text-[#111827] truncate">{c.office}</h4>
-                          <p className="text-xs text-[#6b7280] font-medium mt-0.5">{c.contact}</p>
-                        </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-bold text-[#111827] truncate">{c.office}</h4>
+                        <p className="text-xs text-[#6b7280] font-medium mt-0.5">{c.contact}</p>
                       </div>
 
                       {/* Address detail */}
@@ -226,24 +221,21 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">
                   {sec.category}
                 </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 ">
                   {sec.items.map((e) => (
                     <a
                       key={e.label}
                       href={`tel:${e.phone.replace(/\s/g, "")}`}
-                      className="group flex items-start gap-4 bg-white rounded-3xl p-4 border border-[#e5e7eb]/80 hover:border-red-200 hover:shadow-md transition-all duration-200 active:scale-[0.98]"
+                      className="group block bg-white rounded-3xl p-5 border border-[#e5e7eb]/80 hover:border-red-200 hover:shadow-md transition-all duration-200 active:scale-[0.98]"
                     >
-                      <div className="w-12 h-12 rounded-2xl bg-red-50 group-hover:bg-red-100/70 border border-red-100 flex items-center justify-center text-2xl shrink-0 transition-colors">
-                        {e.icon}
-                      </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-bold text-[#111827] group-hover:text-red-700 transition-colors">
                           {e.label}
                         </h4>
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                        <p className="text-xs text-slate-500 mt-1.5">
                           {e.desc}
                         </p>
-                        <p className="text-sm font-extrabold text-red-600 mt-2 flex items-center gap-1.5">
+                        <p className="text-sm font-extrabold text-red-600 mt-2.5 flex items-center gap-1.5">
                           <Phone className="w-3.5 h-3.5" />
                           <span>{e.phone}</span>
                         </p>
@@ -255,21 +247,7 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
             ))}
 
             {/* Disaster Advisory Tip Card */}
-            <div className="bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200 rounded-3xl p-5 flex gap-4">
-              <span className="text-2xl mt-0.5 shrink-0">💡</span>
-              <div>
-                <h4 className="text-sm font-bold text-red-950">
-                  {isIlokano ? "Palagip para iti Panagsagana" : isTagalog ? "Paalala para sa Paghahanda" : "Emergency Preparedness Tip"}
-                </h4>
-                <p className="text-xs text-red-900/80 leading-relaxed mt-1">
-                  {isIlokano
-                    ? "Nu agbagyo, i-secure dagiti ramit ken alikamen, kalupkopan ti apit no mabalin, ken makipag-amigo ti MAO para iti tulong ken rehabilitation assistance."
-                    : isTagalog
-                    ? "Kapag may bagyo, i-secure ang mga kagamitan sa bukid, anihin ang mga pananim kung maaari, at makipag-ugnayan sa MAO para sa tulong sa rehabilitasyon."
-                    : "In case of severe typhoons, secure your farming equipment, harvest early if possible, and contact your MAO immediately for recovery seeds and calamity assistance."}
-                </p>
-              </div>
-            </div>
+           
           </div>
         )}
       </div>

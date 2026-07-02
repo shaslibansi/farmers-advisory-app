@@ -28,7 +28,7 @@ export interface MAOContact {
 }
 
 export const STATUS_STYLES: Record<StatusType, string> = {
-  green: "bg-green-100 text-green-800 border-green-200",
+  green: "bg-[#0f6b3a] text-white border-[#1a8a4a]",
   yellow: "bg-amber-100 text-amber-800 border-amber-200",
   blue: "bg-blue-100 text-blue-800 border-blue-200",
   red: "bg-red-100 text-red-800 border-red-200",
@@ -46,7 +46,7 @@ export interface WeatherDay {
 }
 
 export const STATUS_DOT: Record<StatusType, string> = {
-  green: "bg-green-500",
+  green: "bg-[#0f6b3a]",
   yellow: "bg-amber-400",
   blue: "bg-blue-500",
   red: "bg-red-500",
