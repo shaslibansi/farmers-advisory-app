@@ -1,6 +1,113 @@
-import { Home, FileText, Headphones, Settings, MapPin, Sprout, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { Home, FileText, Headphones, Settings, MapPin, Sprout, MessageCircle, Menu, X } from "lucide-react";
 import type { Screen } from "../types";
 
+// ── Shared nav items ──────────────────────────────────────────
+function NavItems({
+  screen,
+  setScreen,
+  t,
+  onNavigate,
+}: {
+  screen: Screen;
+  setScreen: (s: Screen) => void;
+  t: Record<string, string>;
+  onNavigate?: () => void;
+}) {
+  const mainNav = [
+    { key: "dashboard" as Screen, icon: Home,          label: t.home },
+    { key: "subsidies" as Screen, icon: FileText,      label: t.subsidiesLabel },
+    { key: "support"   as Screen, icon: Headphones,    label: t.supportLabel },
+    { key: "chatbot"   as Screen, icon: MessageCircle, label: t.chatbot },
+  ];
+
+  const go = (key: Screen) => {
+    setScreen(key);
+    onNavigate?.();
+  };
+
+  return (
+    <>
+      <div className="px-4 pt-4 pb-1">
+        <p className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-widest px-3">Main</p>
+      </div>
+      <nav className="px-3 pb-2 space-y-0.5">
+        {mainNav.map(({ key, icon: Icon, label }) => {
+          const isActive = screen === key;
+          return (
+            <button
+              key={key}
+              onClick={() => go(key)}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
+                isActive
+                  ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#f0fdf4] to-white text-[#0f6b3a] shadow-sm"
+                  : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
+              }`}
+            >
+              <div className={`p-1.5 rounded-lg transition-colors ${isActive ? "bg-[#0f6b3a]/10" : ""}`}>
+                <Icon className={`w-4 h-4 ${isActive ? "text-[#0f6b3a]" : ""}`} />
+              </div>
+              <span className="flex-1 text-left">{label}</span>
+              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#0f6b3a]" />}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="mt-auto px-4 pt-2 pb-1 border-t border-border">
+        <p className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-widest px-3 pt-2">Account</p>
+      </div>
+      <div className="px-3 pb-3 space-y-0.5">
+        <button
+          onClick={() => go("settings")}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
+            screen === "settings"
+              ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#f0fdf4] to-white text-[#0f6b3a] shadow-sm"
+              : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
+          }`}
+        >
+          <div className={`p-1.5 rounded-lg transition-colors ${screen === "settings" ? "bg-[#0f6b3a]/10" : ""}`}>
+            <Settings className="w-4 h-4" />
+          </div>
+          <span className="flex-1 text-left">Settings</span>
+          {screen === "settings" && <span className="w-1.5 h-1.5 rounded-full bg-[#0f6b3a]" />}
+        </button>
+      </div>
+    </>
+  );
+}
+
+// ── Sidebar header branding ───────────────────────────────────
+function SidebarBrand({ t, onClose }: { t: Record<string, string>; onClose?: () => void }) {
+  return (
+    <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-5 py-5 relative overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "30px 30px" }}
+      />
+      <div className="flex items-center gap-3 relative z-10">
+        <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur-sm shrink-0">
+          <Sprout className="w-5 h-5 text-white" />
+        </div>
+        <div className="flex-1">
+          <h1 className="text-white text-lg font-bold leading-tight tracking-tight">FieldLink</h1>
+          <p className="text-green-200 text-[11px]">{t.tagline}</p>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close menu"
+            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main export ───────────────────────────────────────────────
 export default function Sidebar({
   screen, setScreen, t, municipality, region,
 }: {
@@ -10,90 +117,78 @@ export default function Sidebar({
   municipality: string;
   region: string;
 }) {
-  const mainNav = [
-    { key: "dashboard" as Screen, icon: Home, label: t.home },
-    { key: "subsidies" as Screen, icon: FileText, label: t.subsidiesLabel },
-    { key: "support" as Screen, icon: Headphones, label: t.supportLabel },
-    { key: "chatbot" as Screen, icon: MessageCircle, label: t.chatbot },
-  ];
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const locationPill = (municipality || region) && (
+    <div className="px-4 py-3 border-t border-border space-y-2">
+      <div className="flex items-center gap-2 px-3 py-2 bg-[#f0fdf4] rounded-xl border border-[#dcfce7]">
+        <MapPin className="w-3.5 h-3.5 text-[#0f6b3a] shrink-0" />
+        <span className="text-xs font-medium text-[#0f6b3a] truncate">{municipality || region}</span>
+      </div>
+      <div className="flex items-center gap-2 px-3 text-[10px] text-[#9ca3af]">
+        <Sprout className="w-3 h-3" />
+        <span>FieldLink</span>
+      </div>
+    </div>
+  );
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-64 md:shrink-0 bg-white border-r border-border min-h-screen shadow-sm">
-      <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-5 py-6 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "30px 30px" }}
-        />
-        <div className="flex items-center gap-3 relative z-10">
-          <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur-sm">
-            <Sprout className="w-5 h-5 text-white" />
+    <>
+      {/* ── Mobile top AppBar ─────────────────────────────── */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-40 flex items-center gap-3 bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] px-4 py-3 shadow-md">
+        <button
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open menu"
+          className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+        <div className="flex items-center gap-2.5 flex-1">
+          <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center">
+            <Sprout className="w-4 h-4 text-white" />
           </div>
-          <div>
-            <h1 className="text-white text-lg font-bold leading-tight tracking-tight">FieldLink</h1>
-            <p className="text-green-200 text-[11px]">{t.tagline}</p>
-          </div>
+          <span className="text-white font-bold text-base tracking-tight">FieldLink</span>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        <div className="px-4 pt-4 pb-1">
-          <p className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-widest px-3">Main</p>
-        </div>
-        <nav className="px-3 pb-2 space-y-0.5">
-          {mainNav.map(({ key, icon: Icon, label }) => {
-            const isActive = screen === key;
-            return (
-              <button
-                key={key}
-                onClick={() => setScreen(key)}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
-                  isActive
-                    ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#f0fdf4] to-white text-[#0f6b3a] shadow-sm"
-                    : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
-                }`}
-              >
-                <div className={`p-1.5 rounded-lg transition-colors ${isActive ? "bg-[#0f6b3a]/10" : ""}`}>
-                  <Icon className={`w-4 h-4 ${isActive ? "text-[#0f6b3a]" : ""}`} />
-                </div>
-                <span className="flex-1 text-left">{label}</span>
-                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#0f6b3a]" />}
-              </button>
-            );
-          })}
-        </nav>
+      {/* ── Mobile drawer backdrop ───────────────────────── */}
+      {drawerOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-50 flex"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+        >
+          {/* dim overlay */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+            onClick={() => setDrawerOpen(false)}
+          />
 
-        <div className="mt-auto px-4 pt-2 pb-1 border-t border-border">
-          <p className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-widest px-3 pt-2">Account</p>
-        </div>
-        <div className="px-3 pb-3 space-y-0.5">
-          <button
-            onClick={() => setScreen("settings")}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
-              screen === "settings"
-                ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#f0fdf4] to-white text-[#0f6b3a] shadow-sm"
-                : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
-            }`}
-          >
-            <div className={`p-1.5 rounded-lg transition-colors ${screen === "settings" ? "bg-[#0f6b3a]/10" : ""}`}>
-              <Settings className="w-4 h-4" />
+          {/* drawer panel */}
+          <div className="relative z-10 flex flex-col w-72 max-w-[85vw] bg-white min-h-screen shadow-2xl overflow-y-auto animate-slide-in-left">
+            <SidebarBrand t={t} onClose={() => setDrawerOpen(false)} />
+            <div className="flex-1 flex flex-col overflow-y-auto">
+              <NavItems
+                screen={screen}
+                setScreen={setScreen}
+                t={t}
+                onNavigate={() => setDrawerOpen(false)}
+              />
+              {locationPill}
             </div>
-            <span className="flex-1 text-left">Settings</span>
-            {screen === "settings" && <span className="w-1.5 h-1.5 rounded-full bg-[#0f6b3a]" />}
-          </button>
-        </div>
-
-        <div className="px-4 py-3 border-t border-border space-y-2">
-          {(municipality || region) && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-[#f0fdf4] rounded-xl border border-[#dcfce7]">
-              <MapPin className="w-3.5 h-3.5 text-[#0f6b3a] shrink-0" />
-              <span className="text-xs font-medium text-[#0f6b3a] truncate">{municipality || region}</span>
-            </div>
-          )}
-          <div className="flex items-center gap-2 px-3 text-[10px] text-[#9ca3af]">
-            <Sprout className="w-3 h-3" />
-            <span>FieldLink</span>
           </div>
         </div>
-      </div>
-    </aside>
+      )}
+
+      {/* ── Desktop persistent sidebar ───────────────────── */}
+      <aside className="hidden md:flex md:flex-col md:w-64 md:shrink-0 bg-white border-r border-border min-h-screen shadow-sm">
+        <SidebarBrand t={t} />
+        <div className="flex-1 flex flex-col overflow-y-auto">
+          <NavItems screen={screen} setScreen={setScreen} t={t} />
+          {locationPill}
+        </div>
+      </aside>
+    </>
   );
 }
