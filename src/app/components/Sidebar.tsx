@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, FileText, Headphones, Settings, MapPin, Sprout, MessageCircle, Menu, X, Bell } from "lucide-react";
+import { Home, FileText, Headphones, Settings, Sprout, MessageCircle, Menu, X, Bell } from "lucide-react";
 import type { Screen } from "../types";
 
 // ── Shared nav items ──────────────────────────────────────────
@@ -51,10 +51,7 @@ function NavItems({
         })}
       </nav>
 
-      <div className="mt-auto px-4 pt-2 pb-1 border-t border-border">
-        <p className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-widest px-3 pt-2">Account</p>
-      </div>
-      <div className="px-3 pb-3 space-y-0.5">
+      <div className="px-4 pt-2 pb-3 mt-auto">
         <button
           onClick={() => go("settings")}
           className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-xl ${
@@ -103,28 +100,13 @@ function SidebarBrand({ t, onClose }: { t: Record<string, string>; onClose?: () 
 
 // ── Main export ───────────────────────────────────────────────
 export default function Sidebar({
-  screen, setScreen, t, municipality, region,
+  screen, setScreen, t,
 }: {
   screen: Screen;
   setScreen: (s: Screen) => void;
   t: Record<string, string>;
-  municipality: string;
-  region: string;
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const locationPill = (municipality || region) && (
-    <div className="px-4 py-3 border-t border-border space-y-2">
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#0f6b3a] rounded-xl border border-[#1a8a4a]">
-        <MapPin className="w-3.5 h-3.5 text-[#4ade80] shrink-0" />
-        <span className="text-xs font-medium text-white truncate">{municipality || region}</span>
-      </div>
-      <div className="flex items-center gap-2 px-3 text-[10px] text-[#9ca3af]">
-        <Sprout className="w-3 h-3" />
-        <span>FieldLink</span>
-      </div>
-    </div>
-  );
 
   return (
     <>
@@ -181,7 +163,6 @@ export default function Sidebar({
                 t={t}
                 onNavigate={() => setDrawerOpen(false)}
               />
-              {locationPill}
             </div>
           </div>
         </div>
@@ -192,7 +173,6 @@ export default function Sidebar({
         <SidebarBrand t={t} />
         <div className="flex-1 flex flex-col overflow-y-auto">
           <NavItems screen={screen} setScreen={setScreen} t={t} />
-          {locationPill}
         </div>
       </aside>
     </>
