@@ -3,7 +3,7 @@ import { MapPin, ChevronRight, Sprout, Phone, RefreshCw } from "lucide-react";
 import { fetchWeatherFull } from "../data/weather";
 import type { WeatherResult, HourlyPoint } from "../data/weather";
 import { SUBSIDIES } from "../data/subsidies";
-import type { Screen } from "../types";
+import type { Screen, SubsidyTab } from "../types";
 
 const DAYS_EN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
@@ -46,12 +46,13 @@ function TempChart({ points, color = "#f59e0b" }: { points: number[]; color?: st
 type ChartTab = "temperature" | "precipitation" | "wind";
 
 export default function DashboardScreen({
-  t, municipality, region, setScreen,
+  t, municipality, region, setScreen, goToSubsidies,
 }: {
   t: Record<string, string>;
   municipality: string;
   region: string;
   setScreen: (s: Screen) => void;
+  goToSubsidies?: (tab: SubsidyTab) => void;
 }) {
   const [weatherResult, setWeatherResult] = useState<WeatherResult | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
@@ -130,18 +131,19 @@ export default function DashboardScreen({
         {/* ── Metric cards ── */}
         {hasLocation && (
           <div className="grid grid-cols-3 gap-2.5">
-            <button onClick={() => setScreen("subsidies")}
+            <button onClick={() => goToSubsidies?.("active")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
               <Sprout className="w-4 h-4 text-[#0f6b3a] mb-1" />
               <p className="text-base font-bold text-[#111827]">{activeCount}</p>
               <p className="text-[10px] text-[#6b7280] font-medium">{t.activeSubsidies}</p>
             </button>
-            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm">
+            <button onClick={() => goToSubsidies?.("active")}
+              className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
               <span className="text-base">🔔</span>
               <p className="text-base font-bold text-[#111827]">1</p>
               <p className="text-[10px] text-[#6b7280] font-medium">Alerto</p>
-            </div>
-            <button onClick={() => setScreen("subsidies")}
+            </button>
+            <button onClick={() => goToSubsidies?.("completed")}
               className="bg-white border border-[#e5e7eb] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all text-left">
               <span className="text-base">📅</span>
               <p className="text-base font-bold text-[#111827]">{upcomingCount}</p>
@@ -286,7 +288,7 @@ export default function DashboardScreen({
             <h3 className="text-sm font-bold text-[#0f6b3a] mb-1">{t.calendarTitle}</h3>
             <p className="text-sm text-[#111827] leading-relaxed mb-3">{t.calendarBody}</p>
             <div className="space-y-2">
-              {["🌾 Pagasa 7", "🌾 NSIC Rc 222", "🌾 Tubigan 18"].map((v) => (
+              {[" Pagasa 7", " NSIC Rc 222", " Tubigan 18"].map((v) => (
                 <div key={v} className="flex items-center gap-2 text-xs bg-[#0f6b3a] text-white font-semibold px-3 py-2 rounded-xl">
                   <Sprout className="w-3.5 h-3.5 shrink-0" />
                   {v}

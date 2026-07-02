@@ -17,8 +17,8 @@ function formattedDate() {
   return `${month} ${day}, ${year}`;
 }
 
-export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
-  const [tab, setTab] = useState<SubsidyTab>("active");
+export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, string>; initialTab?: SubsidyTab }) {
+  const [tab, setTab] = useState<SubsidyTab>(initialTab ?? "active");
   const [query, setQuery] = useState("");
   const [disclaimerShown, setDisclaimerShown] = useState(false);
 

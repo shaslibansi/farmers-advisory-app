@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Language, Screen } from "./types";
+import type { Language, Screen, SubsidyTab } from "./types";
 import { T } from "./data/translations";
 import OnboardingScreen from "./screens/OnboardingScreen";
 import DashboardScreen from "./screens/DashboardScreen";
@@ -26,6 +26,7 @@ export default function App() {
   const [region, setRegion] = useState(() => loadSaved("region", ""));
   const [municipality, setMunicipality] = useState(() => loadSaved("municipality", ""));
   const [screen, setScreen] = useState<Screen>("dashboard");
+  const [subsidiesTab, setSubsidiesTab] = useState<SubsidyTab>("active");
 
   const t = T[language];
 
@@ -65,9 +66,18 @@ export default function App() {
 
       <main className="flex-1 flex flex-col min-h-screen pt-14 md:pt-0">
         {screen === "dashboard" && (
-          <DashboardScreen t={t} municipality={municipality} region={region} setScreen={setScreen} />
+          <DashboardScreen
+            t={t}
+            municipality={municipality}
+            region={region}
+            setScreen={setScreen}
+            goToSubsidies={(tab) => {
+              setSubsidiesTab(tab);
+              setScreen("subsidies");
+            }}
+          />
         )}
-        {screen === "subsidies" && <SubsidiesScreen t={t} />}
+        {screen === "subsidies" && <SubsidiesScreen t={t} initialTab={subsidiesTab} />}
         {screen === "support" && <SupportScreen t={t} region={region} />}
         {screen === "chatbot" && <ChatbotScreen t={t} />}
         {screen === "settings" && (
