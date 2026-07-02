@@ -41,6 +41,8 @@ export interface WeatherDay {
   temp: string;
   desc: string;
   warn: boolean;
+  maxTemp?: number;
+  minTemp?: number;
 }
 
 export const STATUS_DOT: Record<StatusType, string> = {

@@ -63,7 +63,7 @@ export async function fetchWeather(city: string): Promise<WeatherDay[]> {
 
   const res = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}` +
-    `&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia/Manila&forecast_days=3`,
+    `&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia/Manila&forecast_days=8`,
     { signal: AbortSignal.timeout(8000) },
   );
 
@@ -77,10 +77,14 @@ export async function fetchWeather(city: string): Promise<WeatherDay[]> {
 
   return json.daily.time.map((date: string, i: number) => {
     const code = json.daily.weathercode[i];
+    const max = Math.round(json.daily.temperature_2m_max[i]);
+    const min = Math.round(json.daily.temperature_2m_min[i]);
     return {
-      day: DAY_LABELS[i] ?? date,
+      day: date,
       icon: wmoToEmoji(code),
-      temp: `${Math.round(json.daily.temperature_2m_max[i])}°C`,
+      temp: `${max}° ${min}°`,
+      maxTemp: max,
+      minTemp: min,
       desc: wmoToDesc(code),
       warn: wmoToWarn(code),
     };
