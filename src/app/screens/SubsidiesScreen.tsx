@@ -74,7 +74,7 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
             }`}
           >
             {label}
-            <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${tab === key ? "bg-[#f0fdf4] text-[#0f6b3a]" : "bg-[#f3f4f6] text-[#6b7280]"}`}>
+            <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${tab === key ? "bg-[#0f6b3a] text-white" : "bg-[#f3f4f6] text-[#6b7280]"}`}>
               {SUBSIDIES[key].length}
             </span>
             {tab === key && (

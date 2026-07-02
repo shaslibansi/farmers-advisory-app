@@ -1,97 +1,277 @@
-import { Phone, MapPin, Building2, ShieldAlert } from "lucide-react";
+import { useState } from "react";
+import { Phone, MapPin, Building2, ShieldAlert, Search, ExternalLink, MessageSquare, AlertCircle } from "lucide-react";
 import { MAO_CONTACTS, DEFAULT_MAO } from "../data/contacts";
 
 export default function SupportScreen({ t, region }: { t: Record<string, string>; region: string }) {
+  const [activeTab, setActiveTab] = useState<"mao" | "emergency">("mao");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const contacts = MAO_CONTACTS[region] ?? DEFAULT_MAO;
 
+  // Localized helpers derived from language text
+  const isIlokano = t.maoHeader.includes("nga");
+  const isTagalog = t.maoHeader.includes("na");
+  const emergencyLabel = isIlokano
+    ? "Emerhensia ken Kalamidad"
+    : isTagalog
+    ? "Kalamidad at Emergency"
+    : "Emergency & Disasters";
+  const searchPlaceholder = isIlokano
+    ? "Biruken ti opisina..."
+    : isTagalog
+    ? "Maghanap ng tanggapan..."
+    : "Search office...";
+
+  // Filtering local offices based on search query
+  const filteredContacts = contacts.filter((c) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      c.office.toLowerCase().includes(query) ||
+      c.address.toLowerCase().includes(query) ||
+      c.contact.toLowerCase().includes(query)
+    );
+  });
+
+  // Comprehensive agricultural & national emergency list
+  const emergencyHotlines = [
+    {
+      category: isIlokano ? "Pang-Agrikultura ken Panawen" : isTagalog ? "Pang-Agrikultura at Panahon" : "Agriculture & Weather",
+      items: [
+        {
+          label: "PhilRice Farmers' Text Center",
+          phone: "0917-111-7423",
+          desc: isIlokano ? "Advisory iti bin-i ken pagay" : isTagalog ? "Payo sa binhi at palay" : "Rice seeds & farming advisories",
+          icon: "🌾",
+        },
+        {
+          label: "DA Disaster DRRM Operations",
+          phone: "+63 2 8920 4030",
+          desc: isIlokano ? "Tulong ken reporting ti perdi ti apit" : isTagalog ? "Tulong at ulat sa pinsala ng pananim" : "Crop damage reporting & assistance",
+          icon: "🚜",
+        },
+        {
+          label: "PAGASA Weather Updates",
+          phone: "(02) 8284-0800",
+          desc: isIlokano ? "Bannawag ti bagyo ken layus" : isTagalog ? "Babala sa bagyo at baha" : "Typhoon & flood warnings",
+          icon: "🌦️",
+        },
+        {
+          label: "NDRRMC Operations Center",
+          phone: "(02) 8911-1406",
+          desc: isIlokano ? "Nailian a pannakaisalakan ken disaster" : isTagalog ? "Pambansang pagsagip at kalamidad" : "National rescue coordination",
+          icon: "🚨",
+        },
+      ],
+    },
+    {
+      category: isIlokano ? "Medikal ken Seguridad" : isTagalog ? "Medikal at Seguridad" : "Medical & Public Safety",
+      items: [
+        {
+          label: "National Emergency Hotline",
+          phone: "911",
+          desc: isIlokano ? "Pulis, Bumbero, ken Ambulansia" : isTagalog ? "Pulis, Bumbero, at Ambulansya" : "Police, Fire, & Ambulance",
+          icon: "🚑",
+        },
+        {
+          label: "Philippine Red Cross",
+          phone: "143",
+          desc: isIlokano ? "First-aid ken tulong medikal" : isTagalog ? "Unang lunas at tulong medikal" : "First-aid & emergency rescue",
+          icon: "❤️",
+        },
+        {
+          label: "Bureau of Fire Protection",
+          phone: "(02) 8426-0219",
+          desc: isIlokano ? "Uray ken rescue operations" : isTagalog ? "Sunog at operasyong pagsagip" : "Fire emergencies",
+          icon: "🚒",
+        },
+        {
+          label: "Philippine National Police",
+          phone: "117",
+          desc: isIlokano ? "Seguridad ken kappia" : isTagalog ? "Seguridad at kapayapaan" : "Local law enforcement",
+          icon: "👮",
+        },
+      ],
+    },
+  ];
+
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-0">
-      <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-4 md:px-8 md:pt-6 md:pb-5 shadow-sm">
-        <h2 className="text-white text-lg md:text-xl font-bold">{t.maoHeader}</h2>
-        <p className="text-green-200 text-sm mt-0.5">{t.maoSubhead}</p>
+    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-6">
+      {/* ── Top Header & Tab Pills ─────────────────────────── */}
+      <div className="bg-white border-b border-[#e5e7eb] px-4 py-6 md:px-8 md:py-8">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="text-[#111827] text-2xl font-extrabold tracking-tight flex items-center gap-2">
+              <span className="text-[#0f6b3a]">📞</span> {t.maoHeader}
+            </h2>
+            <p className="text-[#6b7280] text-sm mt-1">{t.maoSubhead}</p>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="bg-slate-100 p-1.5 rounded-2xl flex gap-1 self-start md:self-auto border border-[#e5e7eb]/80">
+            <button
+              onClick={() => setActiveTab("mao")}
+              className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
+                activeTab === "mao"
+                  ? "bg-[#0f6b3a] text-white shadow-md"
+                  : "text-[#6b7280] hover:text-[#111827] hover:bg-slate-200/50"
+              }`}
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>{t.maoHeader}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("emergency")}
+              className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
+                activeTab === "emergency"
+                  ? "bg-red-600 text-white shadow-md"
+                  : "text-[#6b7280] hover:text-red-600 hover:bg-slate-200/50"
+              }`}
+            >
+              <ShieldAlert className="w-3.5 h-3.5" />
+              <span>{emergencyLabel}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="px-4 py-4 md:px-8 md:py-6 space-y-4">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {contacts.map((c) => (
-            <div
-              key={c.office}
-              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden border border-[#e5e7eb]"
-            >
-              <div className="h-1.5 bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a]" />
-
-              <div className="p-4 space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#f0fdf4] flex items-center justify-center shrink-0 shadow-sm">
-                    <Building2 className="w-5 h-5 text-[#0f6b3a]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#111827] break-words">{c.office}</p>
-                    {c.contact && (
-                      <p className="text-xs text-[#6b7280] mt-0.5">{c.contact}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2 text-xs text-[#6b7280] bg-[#f9fafb] rounded-xl px-3 py-2.5">
-                  <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#0f6b3a]" />
-                  <span className="leading-relaxed">{c.address}</span>
-                </div>
-
-                <a
-                  href={`tel:${c.phone.replace(/\s/g, "")}`}
-                  className="flex items-center justify-center gap-2.5 w-full bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] text-white font-bold text-sm py-3 rounded-xl hover:shadow-lg transition-all active:scale-[0.98]"
+      <div className="max-w-4xl mx-auto px-4 py-6 md:px-8">
+        {/* ── Tab 1: Local Municipal Agriculture Offices (MAO) ── */}
+        {activeTab === "mao" && (
+          <div className="space-y-6">
+            {/* Search filter */}
+            <div className="relative max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 text-sm bg-white border border-[#e5e7eb] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#0f6b3a] focus:border-transparent transition-all shadow-sm hover:border-slate-300"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-semibold"
                 >
-                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                    <Phone className="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <span className="truncate">{c.phone}</span>
-                </a>
+                  Clear
+                </button>
+              )}
+            </div>
 
-                {c.fb && (
-                  <a
-                    href={`https://${c.fb}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full bg-white text-[#0f6b3a] font-semibold text-sm py-2.5 rounded-xl border-2 border-[#e5e7eb] hover:border-[#0f6b3a]/30 hover:bg-[#f0fdf4] transition-all active:scale-[0.98]"
+            {/* Contacts Grid */}
+            {filteredContacts.length > 0 ? (
+              <div className="grid gap-5 sm:grid-cols-2">
+                {filteredContacts.map((c) => (
+                  <div
+                    key={c.office}
+                    className="bg-white rounded-3xl shadow-sm hover:shadow-md border border-[#e5e7eb]/80 transition-all duration-200 overflow-hidden flex flex-col justify-between"
                   >
-                    <span className="text-base">📘</span>
-                    <span>Facebook Page</span>
-                  </a>
-                )}
+                    <div className="p-5 flex-1 flex flex-col gap-4">
+                      {/* Top Branding Row */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center shrink-0">
+                          <Building2 className="w-5 h-5 text-[#0f6b3a]" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-bold text-[#111827] truncate">{c.office}</h4>
+                          <p className="text-xs text-[#6b7280] font-medium mt-0.5">{c.contact}</p>
+                        </div>
+                      </div>
+
+                      {/* Address detail */}
+                      <div className="flex items-start gap-2.5 text-xs text-[#4b5563] bg-[#f9fafb] rounded-2xl px-4 py-3 border border-slate-100/60 leading-relaxed mt-auto">
+                        <MapPin className="w-4 h-4 shrink-0 text-[#0f6b3a] mt-0.5" />
+                        <span>{c.address}</span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Footer */}
+                    <div className="bg-slate-50 border-t border-[#e5e7eb]/70 p-4 flex gap-2">
+                      <a
+                        href={`tel:${c.phone.replace(/\s/g, "")}`}
+                        className="flex items-center justify-center gap-2 bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] text-white font-bold text-xs py-2.5 px-4 rounded-xl hover:shadow-md transition-all active:scale-[0.98] flex-1"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Call Office</span>
+                      </a>
+                      {c.fb && (
+                        <a
+                          href={`https://${c.fb}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 bg-white text-[#1877f2] border border-[#e5e7eb] hover:bg-slate-100/50 font-bold text-xs py-2.5 px-4 rounded-xl transition-all active:scale-[0.98] flex-1"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Facebook</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-[#e5e7eb] rounded-3xl p-8 text-center max-w-md mx-auto shadow-sm">
+                <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-3" />
+                <p className="text-sm font-semibold text-[#111827]">{t.noResults}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Tab 2: Categorized Emergency / Disaster Hotlines ── */}
+        {activeTab === "emergency" && (
+          <div className="space-y-8">
+            {emergencyHotlines.map((sec) => (
+              <div key={sec.category} className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">
+                  {sec.category}
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {sec.items.map((e) => (
+                    <a
+                      key={e.label}
+                      href={`tel:${e.phone.replace(/\s/g, "")}`}
+                      className="group flex items-start gap-4 bg-white rounded-3xl p-4 border border-[#e5e7eb]/80 hover:border-red-200 hover:shadow-md transition-all duration-200 active:scale-[0.98]"
+                    >
+                      <div className="w-12 h-12 rounded-2xl bg-red-50 group-hover:bg-red-100/70 border border-red-100 flex items-center justify-center text-2xl shrink-0 transition-colors">
+                        {e.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-bold text-[#111827] group-hover:text-red-700 transition-colors">
+                          {e.label}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                          {e.desc}
+                        </p>
+                        <p className="text-sm font-extrabold text-red-600 mt-2 flex items-center gap-1.5">
+                          <Phone className="w-3.5 h-3.5" />
+                          <span>{e.phone}</span>
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* Disaster Advisory Tip Card */}
+            <div className="bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200 rounded-3xl p-5 flex gap-4">
+              <span className="text-2xl mt-0.5 shrink-0">💡</span>
+              <div>
+                <h4 className="text-sm font-bold text-red-950">
+                  {isIlokano ? "Palagip para iti Panagsagana" : isTagalog ? "Paalala para sa Paghahanda" : "Emergency Preparedness Tip"}
+                </h4>
+                <p className="text-xs text-red-900/80 leading-relaxed mt-1">
+                  {isIlokano
+                    ? "Nu agbagyo, i-secure dagiti ramit ken alikamen, kalupkopan ti apit no mabalin, ken makipag-amigo ti MAO para iti tulong ken rehabilitation assistance."
+                    : isTagalog
+                    ? "Kapag may bagyo, i-secure ang mga kagamitan sa bukid, anihin ang mga pananim kung maaari, at makipag-ugnayan sa MAO para sa tulong sa rehabilitasyon."
+                    : "In case of severe typhoons, secure your farming equipment, harvest early if possible, and contact your MAO immediately for recovery seeds and calamity assistance."}
+                </p>
               </div>
             </div>
-          ))}
-        </div>
-
-        <div className="rounded-2xl shadow-sm overflow-hidden border border-red-200">
-          <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-              <ShieldAlert className="w-4 h-4 text-white" />
-            </div>
-            <p className="text-sm font-bold text-white">Emergency / Kalamidad</p>
           </div>
-          <div className="bg-red-50 px-4 py-3 space-y-2">
-            {[
-              { label: "NDRRMC Hotline", phone: "911", icon: "🚨" },
-              { label: "PhilRice Hotline", phone: "+63 44 456 0285", icon: "📞" },
-              { label: "DA Disaster Hotline", phone: "+63 2 8920 4030", icon: "📞" },
-            ].map((e) => (
-              <a
-                key={e.label}
-                href={`tel:${e.phone.replace(/\s/g, "")}`}
-                className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-red-100 hover:shadow-sm hover:border-red-200 transition-all active:scale-[0.98]"
-              >
-                <span className="text-lg shrink-0">{e.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs md:text-sm font-semibold text-[#111827]">{e.label}</p>
-                  <p className="text-xs font-bold text-red-600 mt-0.5">{e.phone}</p>
-                </div>
-                <Phone className="w-4 h-4 text-red-400 shrink-0" />
-              </a>
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

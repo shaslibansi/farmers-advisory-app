@@ -67,8 +67,8 @@ export default function ChatbotScreen({ t }: { t: Record<string, string> }) {
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div className={`flex gap-2.5 max-w-[85%] md:max-w-[70%] ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
               {msg.role === "bot" && (
-                <div className="w-8 h-8 rounded-full bg-[#f0fdf4] border border-[#dcfce7] flex items-center justify-center shrink-0 mt-1">
-                  <Bot className="w-4 h-4 text-[#0f6b3a]" />
+                <div className="w-8 h-8 rounded-full bg-[#0f6b3a] border border-[#1a8a4a] flex items-center justify-center shrink-0 mt-1">
+                  <Bot className="w-4 h-4 text-white" />
                 </div>
               )}
               <div>

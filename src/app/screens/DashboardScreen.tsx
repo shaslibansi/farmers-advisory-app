@@ -112,7 +112,7 @@ export default function DashboardScreen({
         {alertDismissed && hasLocation && (
           <button
             onClick={() => setAlertDismissed(false)}
-            className="w-full flex items-center gap-2 bg-green-50 border border-green-200 rounded-2xl px-4 py-3 text-xs text-green-700 hover:bg-green-100 transition-colors"
+            className="w-full flex items-center gap-2 bg-[#0f6b3a] border border-[#1a8a4a] rounded-2xl px-4 py-3 text-xs text-white hover:bg-[#1a8a4a] transition-colors"
           >
             <Bell className="w-3.5 h-3.5" />
             {t.noAlerts}
@@ -157,13 +157,13 @@ export default function DashboardScreen({
                   <div className="flex gap-3 overflow-hidden">
                     {Array.from({ length: 7 }).map((_, i) => (
                       <div key={i} className="flex flex-col items-center min-w-[70px] flex-1">
-                        <div className="h-3 w-8 bg-green-300/30 rounded mb-2" />
+                        <div className="h-3 w-8 bg-white/20 rounded mb-2" />
                         <div className={`w-full flex flex-col items-center justify-between rounded-xl py-3 px-2 ${
                           i === 0 ? "bg-white/15 border border-white/20" : ""
                         }`}>
-                          <div className="h-3 w-6 bg-green-300/30 rounded mb-2.5" />
-                          <div className="w-8 h-8 rounded-full bg-green-300/30 mb-3" />
-                          <div className="h-3 w-10 bg-green-300/30 rounded" />
+                          <div className="h-3 w-6 bg-white/20 rounded mb-2.5" />
+                          <div className="w-8 h-8 rounded-full bg-white/20 mb-3" />
+                          <div className="h-3 w-10 bg-white/20 rounded" />
                         </div>
                       </div>
                     ))}
@@ -176,7 +176,7 @@ export default function DashboardScreen({
                   <p className="text-xs text-red-600 mb-2">Failed to load weather data</p>
                   <button
                     onClick={retryWeather}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#0f6b3a] bg-[#f0fdf4] px-3 py-1.5 rounded-xl hover:bg-[#dcfce7] transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-[#0f6b3a] px-3 py-1.5 rounded-xl hover:bg-[#1a8a4a] transition-colors"
                   >
                     <RefreshCw className="w-3 h-3" />
                     Retry
@@ -254,7 +254,7 @@ export default function DashboardScreen({
               <p className="text-sm md:text-base text-[#111827] leading-relaxed">{t.calendarBody}</p>
               <div className="mt-4 space-y-2">
                 {["🌾 Pagasa 7", "🌾 NSIC Rc 222", "🌾 Tubigan 18"].map((v) => (
-                  <div key={v} className="flex items-center gap-2 text-xs bg-[#f0fdf4] text-[#0f6b3a] font-semibold px-3 py-2 rounded-xl border border-[#dcfce7]">
+                  <div key={v} className="flex items-center gap-2 text-xs bg-[#0f6b3a] text-white font-semibold px-3 py-2 rounded-xl border border-[#1a8a4a]">
                     <Sprout className="w-3.5 h-3.5 shrink-0" />
                     {v}
                   </div>
@@ -262,7 +262,7 @@ export default function DashboardScreen({
               </div>
               <button
                 onClick={() => setScreen("subsidies")}
-                className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-[#0f6b3a] bg-[#f0fdf4] py-2.5 rounded-xl border border-[#dcfce7] hover:bg-[#dcfce7] transition-colors"
+                className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#0f6b3a] py-2.5 rounded-xl border border-[#1a8a4a] hover:bg-[#1a8a4a] transition-colors"
               >
                 {t.quickSubsidies}
                 <ChevronRight className="w-3.5 h-3.5" />

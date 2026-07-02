@@ -30,7 +30,7 @@ export default function BottomNav({
           {screen === key && (
             <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-[#0f6b3a] to-[#1a8a4a] rounded-b-full" />
           )}
-          <div className={`p-1.5 rounded-xl transition-colors ${screen === key ? "bg-[#f0fdf4]" : ""}`}>
+          <div className={`p-1.5 rounded-xl transition-colors ${screen === key ? "bg-[#0f6b3a]/10" : ""}`}>
             {icon}
           </div>
           <span className="text-[10px] font-semibold">{label}</span>

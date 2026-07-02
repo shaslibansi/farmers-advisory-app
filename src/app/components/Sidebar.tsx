@@ -40,7 +40,7 @@ function NavItems({
               onClick={() => go(key)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
                 isActive
-                  ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#f0fdf4] to-white text-[#0f6b3a] shadow-sm"
+                  ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#0f6b3a]/15 to-white text-[#0f6b3a] shadow-sm"
                   : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
               }`}
             >
@@ -62,7 +62,7 @@ function NavItems({
           onClick={() => go("settings")}
           className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6b3a] focus-visible:ring-offset-1 rounded-r-xl ${
             screen === "settings"
-              ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#f0fdf4] to-white text-[#0f6b3a] shadow-sm"
+              ? "border-l-4 border-[#0f6b3a] bg-gradient-to-r from-[#0f6b3a]/15 to-white text-[#0f6b3a] shadow-sm"
               : "border-l-4 border-transparent text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#111827]"
           }`}
         >
@@ -121,9 +121,9 @@ export default function Sidebar({
 
   const locationPill = (municipality || region) && (
     <div className="px-4 py-3 border-t border-border space-y-2">
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#f0fdf4] rounded-xl border border-[#dcfce7]">
-        <MapPin className="w-3.5 h-3.5 text-[#0f6b3a] shrink-0" />
-        <span className="text-xs font-medium text-[#0f6b3a] truncate">{municipality || region}</span>
+      <div className="flex items-center gap-2 px-3 py-2 bg-[#0f6b3a] rounded-xl border border-[#1a8a4a]">
+        <MapPin className="w-3.5 h-3.5 text-[#4ade80] shrink-0" />
+        <span className="text-xs font-medium text-white truncate">{municipality || region}</span>
       </div>
       <div className="flex items-center gap-2 px-3 text-[10px] text-[#9ca3af]">
         <Sprout className="w-3 h-3" />
