@@ -95,27 +95,28 @@ export default function SubsidiesScreen({ t, initialTab }: { t: Record<string, s
         ) : (
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((s) => (
-              <div key={s.name} className="bg-white border border-[#e5e7eb] rounded-2xl p-4 space-y-2.5 shadow-sm hover:shadow-md transition-all">
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#111827] leading-snug">{s.name}</p>
-                    <p className="text-xs text-[#6b7280] mt-0.5">{s.commodity}</p>
+              <div key={s.name} className="bg-white border border-[#e5e7eb] rounded-2xl p-4 flex flex-col justify-between h-full shadow-sm hover:shadow-md transition-all">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-[#111827] leading-snug">{s.name}</p>
+                      <p className="text-xs text-[#6b7280] mt-1">{s.commodity}</p>
+                    </div>
+                  </div>
+
+                  <div className={`flex items-center text-xs font-semibold px-3 py-2 rounded-xl border ${STATUS_STYLES[s.statusType]}`}>
+                    <span>{s.status}</span>
                   </div>
                 </div>
 
-                <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-xl border ${STATUS_STYLES[s.statusType]}`}>
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[s.statusType]}`} />
-                  {s.status}
-                </div>
-
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 mt-4 pt-3 border-t border-slate-100">
                   <div className="flex gap-2 text-xs">
-                    <span className="text-[#6b7280] shrink-0 font-medium">{t.requirements}:</span>
-                    <span className="text-[#111827]">{s.requirements}</span>
+                    <span className="text-[#6b7280] shrink-0 font-medium w-24">{t.requirements}:</span>
+                    <span className="text-[#111827] flex-1">{s.requirements}</span>
                   </div>
                   <div className="flex gap-2 text-xs">
-                    <span className="text-[#6b7280] shrink-0 font-medium">{t.deadline}:</span>
-                    <span className="text-[#111827] font-semibold">{s.deadline}</span>
+                    <span className="text-[#6b7280] shrink-0 font-medium w-24">{t.deadline}:</span>
+                    <span className="text-[#111827] font-semibold flex-1">{s.deadline}</span>
                   </div>
                 </div>
               </div>
