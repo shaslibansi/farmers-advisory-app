@@ -40,7 +40,7 @@ export default function SubsidiesScreen({ t }: { t: Record<string, string> }) {
   ];
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden pb-20 md:pb-0">
+    <div className="flex-1 flex flex-col overflow-hidden pb-6">
       <div className="bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] px-4 pt-5 pb-4 md:px-8 md:pt-6 md:pb-4 shadow-sm">
         <h2 className="text-white text-lg md:text-xl font-bold mb-3">{t.subsidiesLabel} & Vouchers</h2>
         <div className="relative md:max-w-md">

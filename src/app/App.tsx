@@ -7,7 +7,6 @@ import SubsidiesScreen from "./screens/SubsidiesScreen";
 import SupportScreen from "./screens/SupportScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import ChatbotScreen from "./components/chatbot/ChatbotScreen";
-import BottomNav from "./components/BottomNav";
 import Sidebar from "./components/Sidebar";
 
 function loadSaved<T>(key: string, fallback: T): T {
@@ -84,8 +83,6 @@ export default function App() {
           />
         )}
       </main>
-
-      <BottomNav screen={screen} setScreen={setScreen} t={t} />
     </div>
   );
 }

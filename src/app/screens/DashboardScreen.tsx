@@ -57,7 +57,7 @@ export default function DashboardScreen({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-0">
+    <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-6">
 
       <div className="px-4 py-4 md:px-8 md:py-6 space-y-4 md:space-y-6">
         {!hasLocation && (
