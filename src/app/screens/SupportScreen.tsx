@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Phone, MapPin, Building2, ShieldAlert, Search, ExternalLink, MessageSquare, AlertCircle } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Phone, Building2, ShieldAlert, Search, MessageSquare, AlertCircle } from "lucide-react";
 import { MAO_CONTACTS, DEFAULT_MAO } from "../data/contacts";
 
 export default function SupportScreen({ t, region }: { t: Record<string, string>; region: string }) {
@@ -16,24 +16,36 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
     : isTagalog
     ? "Kalamidad at Emergency"
     : "Emergency & Disasters";
+    
   const searchPlaceholder = isIlokano
     ? "Biruken ti opisina..."
     : isTagalog
     ? "Maghanap ng tanggapan..."
     : "Search office...";
 
+  const emergencySearchPlaceholder = isIlokano
+    ? "Biruken ti emergency..."
+    : isTagalog
+    ? "Maghanap ng emergency..."
+    : "Search emergency...";
+
+  const searchPlaceholderCurrent = activeTab === "mao" ? searchPlaceholder : emergencySearchPlaceholder;
+
   // Filtering local offices based on search query
-  const filteredContacts = contacts.filter((c) => {
+  const filteredContacts = useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
     const query = searchQuery.toLowerCase();
-    return (
-      c.office.toLowerCase().includes(query) ||
-      c.address.toLowerCase().includes(query) ||
-      c.contact.toLowerCase().includes(query)
-    );
-  });
+    return contacts.filter((c) => {
+      return (
+        c.office.toLowerCase().includes(query) ||
+        c.address.toLowerCase().includes(query) ||
+        c.contact.toLowerCase().includes(query)
+      );
+    });
+  }, [searchQuery, contacts]);
 
   // Comprehensive agricultural & national emergency list
-  const emergencyHotlines = [
+  const emergencyHotlines = useMemo(() => [
     {
       category: isIlokano ? "Pang-Agrikultura ken Panawen" : isTagalog ? "Pang-Agrikultura at Panahon" : "Agriculture & Weather",
       items: [
@@ -92,7 +104,24 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
         },
       ],
     },
-  ];
+  ], [isIlokano, isTagalog]);
+
+  // Filtering emergency hotlines based on search query
+  const filteredEmergencyHotlines = useMemo(() => {
+    if (!searchQuery.trim()) return emergencyHotlines;
+    const query = searchQuery.toLowerCase();
+    return emergencyHotlines
+      .map((sec) => {
+        const filteredItems = sec.items.filter(
+          (item) =>
+            item.label.toLowerCase().includes(query) ||
+            item.desc.toLowerCase().includes(query) ||
+            item.phone.includes(query)
+        );
+        return { ...sec, items: filteredItems };
+      })
+      .filter((sec) => sec.items.length > 0);
+  }, [searchQuery, emergencyHotlines]);
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-6">
@@ -109,7 +138,10 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
           {/* Tab Navigation */}
           <div className="bg-slate-100 p-1.5 rounded-2xl flex gap-1 border border-[#e5e7eb]/80 shrink-0">
             <button
-              onClick={() => setActiveTab("mao")}
+              onClick={() => {
+                setActiveTab("mao");
+                setSearchQuery(""); // clear search on tab switch
+              }}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
                 activeTab === "mao"
                   ? "bg-[#0f6b3a] text-white shadow-md"
@@ -120,7 +152,10 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
               <span>{t.maoHeader}</span>
             </button>
             <button
-              onClick={() => setActiveTab("emergency")}
+              onClick={() => {
+                setActiveTab("emergency");
+                setSearchQuery(""); // clear search on tab switch
+              }}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
                 activeTab === "emergency"
                   ? "bg-red-600 text-white shadow-md"
@@ -134,30 +169,30 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 md:px-8">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 space-y-6">
+        {/* Universal Search filter */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder={searchPlaceholderCurrent}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 text-sm bg-white border border-[#e5e7eb] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#0f6b3a] focus:border-transparent transition-all shadow-sm hover:border-slate-300"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-semibold"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
         {/* ── Tab 1: Local Municipal Agriculture Offices (MAO) ── */}
         {activeTab === "mao" && (
           <div className="space-y-6">
-            {/* Search filter */}
-            <div className="relative max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder={searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 text-sm bg-white border border-[#e5e7eb] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#0f6b3a] focus:border-transparent transition-all shadow-sm hover:border-slate-300"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-semibold"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
             {/* Contacts Grid */}
             {filteredContacts.length > 0 ? (
               <div className="grid gap-5 sm:grid-cols-2">
@@ -173,7 +208,7 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
                     <div className="flex flex-wrap items-center gap-4 mt-3 pt-2 border-t border-slate-100">
                       <a
                         href={`tel:${c.phone.replace(/\s/g, "")}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-red-600 hover:text-red-700 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#0f6b3a] hover:text-[#1a8a4a] transition-colors"
                       >
                         <Phone className="w-3.5 h-3.5" />
                         <span>{c.phone}</span>
@@ -205,38 +240,42 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
         {/* ── Tab 2: Categorized Emergency / Disaster Hotlines ── */}
         {activeTab === "emergency" && (
           <div className="space-y-8">
-            {emergencyHotlines.map((sec) => (
-              <div key={sec.category} className="space-y-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">
-                  {sec.category}
-                </h3>
-                <div className="grid gap-4 ">
-                  {sec.items.map((e) => (
-                    <a
-                      key={e.label}
-                      href={`tel:${e.phone.replace(/\s/g, "")}`}
-                      className="group block bg-white rounded-3xl p-5 border border-[#e5e7eb]/80 hover:border-red-200 hover:shadow-md transition-all duration-200 active:scale-[0.98]"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-bold text-[#111827] group-hover:text-red-700 transition-colors">
-                          {e.label}
-                        </h4>
-                        <p className="text-xs text-slate-500 mt-1.5">
-                          {e.desc}
-                        </p>
-                        <p className="text-sm font-extrabold text-red-600 mt-2.5 flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5" />
-                          <span>{e.phone}</span>
-                        </p>
-                      </div>
-                    </a>
-                  ))}
+            {filteredEmergencyHotlines.length > 0 ? (
+              filteredEmergencyHotlines.map((sec) => (
+                <div key={sec.category} className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">
+                    {sec.category}
+                  </h3>
+                  <div className="grid gap-4">
+                    {sec.items.map((e) => (
+                      <a
+                        key={e.label}
+                        href={`tel:${e.phone.replace(/\s/g, "")}`}
+                        className="group block bg-white rounded-3xl p-5 border border-[#e5e7eb]/80 hover:border-red-200 hover:shadow-md transition-all duration-200 active:scale-[0.98]"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-bold text-[#111827] group-hover:text-red-700 transition-colors">
+                            {e.label}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1.5">
+                            {e.desc}
+                          </p>
+                          <p className="text-sm font-extrabold text-red-600 mt-2.5 flex items-center gap-1.5">
+                            <Phone className="w-3.5 h-3.5" />
+                            <span>{e.phone}</span>
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="bg-white border border-[#e5e7eb] rounded-3xl p-8 text-center max-w-md mx-auto shadow-sm">
+                <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-3" />
+                <p className="text-sm font-semibold text-[#111827]">{t.noResults}</p>
               </div>
-            ))}
-
-            {/* Disaster Advisory Tip Card */}
-           
+            )}
           </div>
         )}
       </div>
