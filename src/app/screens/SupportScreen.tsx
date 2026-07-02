@@ -97,17 +97,17 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
   return (
     <div className="flex-1 overflow-y-auto bg-[#fafbfa] pb-20 md:pb-6">
       {/* ── Top Header & Tab Pills ─────────────────────────── */}
-      <div className="bg-white border-b border-[#e5e7eb] px-4 py-6 md:px-8 md:py-8">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="bg-white border-b border-[#e5e7eb] px-4 py-5 md:px-8 md:py-6">
+        <div className="max-w-4xl mx-auto flex flex-row items-center justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-[#111827] text-2xl font-extrabold tracking-tight flex items-center gap-2">
-              <span className="text-[#0f6b3a]">📞</span> {t.maoHeader}
+            <h2 className="text-[#111827] text-xl md:text-2xl font-extrabold tracking-tight">
+              {t.maoHeader}
             </h2>
-            <p className="text-[#6b7280] text-sm mt-1">{t.maoSubhead}</p>
+            <p className="text-[#6b7280] text-xs md:text-sm mt-0.5">{t.maoSubhead}</p>
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-slate-100 p-1.5 rounded-2xl flex gap-1 self-start md:self-auto border border-[#e5e7eb]/80">
+          <div className="bg-slate-100 p-1.5 rounded-2xl flex gap-1 border border-[#e5e7eb]/80 shrink-0">
             <button
               onClick={() => setActiveTab("mao")}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
@@ -164,37 +164,26 @@ export default function SupportScreen({ t, region }: { t: Record<string, string>
                 {filteredContacts.map((c) => (
                   <div
                     key={c.office}
-                    className="bg-white rounded-3xl shadow-sm hover:shadow-md border border-[#e5e7eb]/80 transition-all duration-200 overflow-hidden flex flex-col justify-between"
+                    className="bg-white rounded-3xl p-5 border border-[#e5e7eb]/80 shadow-sm hover:shadow-md transition-all duration-200"
                   >
-                    <div className="p-5 flex-1 flex flex-col gap-4">
-                      {/* Top Branding Row */}
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-bold text-[#111827] truncate">{c.office}</h4>
-                        <p className="text-xs text-[#6b7280] font-medium mt-0.5">{c.contact}</p>
-                      </div>
+                    <h4 className="text-sm font-bold text-[#111827]">{c.office}</h4>
+                    <p className="text-xs text-[#6b7280] font-medium mt-0.5">{c.contact}</p>
+                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">{c.address}</p>
 
-                      {/* Address detail */}
-                      <div className="flex items-start gap-2.5 text-xs text-[#4b5563] bg-[#f9fafb] rounded-2xl px-4 py-3 border border-slate-100/60 leading-relaxed mt-auto">
-                        <MapPin className="w-4 h-4 shrink-0 text-[#0f6b3a] mt-0.5" />
-                        <span>{c.address}</span>
-                      </div>
-                    </div>
-
-                    {/* Bottom Action Footer */}
-                    <div className="bg-slate-50 border-t border-[#e5e7eb]/70 p-4 flex gap-2">
+                    <div className="flex flex-wrap items-center gap-4 mt-3 pt-2 border-t border-slate-100">
                       <a
                         href={`tel:${c.phone.replace(/\s/g, "")}`}
-                        className="flex items-center justify-center gap-2 bg-gradient-to-br from-[#0f6b3a] to-[#1a8a4a] text-white font-bold text-xs py-2.5 px-4 rounded-xl hover:shadow-md transition-all active:scale-[0.98] flex-1"
+                        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-red-600 hover:text-red-700 transition-colors"
                       >
                         <Phone className="w-3.5 h-3.5" />
-                        <span>Call Office</span>
+                        <span>{c.phone}</span>
                       </a>
                       {c.fb && (
                         <a
                           href={`https://${c.fb}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 bg-white text-[#1877f2] border border-[#e5e7eb] hover:bg-slate-100/50 font-bold text-xs py-2.5 px-4 rounded-xl transition-all active:scale-[0.98] flex-1"
+                          className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#1877f2] hover:underline"
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
                           <span>Facebook</span>

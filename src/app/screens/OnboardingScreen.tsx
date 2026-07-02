@@ -24,12 +24,9 @@ export default function OnboardingScreen({
         <div className="absolute inset-0 opacity-[0.03]"
           style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }}
         />
-        <div className="flex items-center gap-3 mb-2 relative z-10">
-          <span className="text-4xl md:text-5xl">🌾</span>
-          <div>
-            <h1 className="text-white text-2xl md:text-3xl font-bold leading-tight">FieldLink</h1>
-            <p className="text-green-200 text-sm md:text-base">{t.tagline}</p>
-          </div>
+        <div className="text-center mb-2 relative z-10">
+          <h1 className="text-white text-2xl md:text-3xl font-bold leading-tight">FieldLink</h1>
+          <p className="text-green-200 text-sm md:text-base mt-1">{t.tagline}</p>
         </div>
       </div>
 

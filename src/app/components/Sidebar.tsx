@@ -147,12 +147,7 @@ export default function Sidebar({
 
         {/* Centre — branding (absolute so it's truly centred regardless of button widths) */}
         <div className="absolute inset-x-0 flex justify-center items-center pointer-events-none">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-white/20 flex items-center justify-center">
-              <Sprout className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="text-white font-bold text-base tracking-tight">FieldLink</span>
-          </div>
+          <span className="text-white font-extrabold text-xl tracking-tight">FieldLink</span>
         </div>
 
         {/* Right — notification bell */}

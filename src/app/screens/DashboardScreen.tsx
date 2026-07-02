@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { MapPin, Bell, AlertTriangle, X, ChevronRight, Sprout, Calendar, Phone, RefreshCw } from "lucide-react";
+import { MapPin, ChevronRight, Sprout, Calendar, Phone, RefreshCw } from "lucide-react";
 import { fetchWeather } from "../data/weather";
-import { SUBSIDIES } from "../data/subsidies";
 import type { Screen, WeatherDay } from "../types";
 
 const MONTHS_FIL = [
@@ -11,22 +10,6 @@ const MONTHS_FIL = [
 
 const DAYS_FIL = ["Linggo", "Lunes", "Martes", "Miyerkules", "Huwebes", "Biyernes", "Sabado"];
 
-function formattedDate() {
-  const d = new Date();
-  const dayName = DAYS_FIL[d.getDay()];
-  const month = MONTHS_FIL[d.getMonth()];
-  const day = d.getDate();
-  const year = d.getFullYear();
-  return `${dayName}, ${month} ${day}, ${year}`;
-}
-
-function getGreeting(t: Record<string, string>) {
-  const hour = new Date().getHours();
-  if (hour < 12) return t.morning;
-  if (hour < 18) return t.afternoon;
-  return t.evening;
-}
-
 export default function DashboardScreen({
   t, municipality, region, setScreen,
 }: {
@@ -35,13 +18,11 @@ export default function DashboardScreen({
   region: string;
   setScreen: (s: Screen) => void;
 }) {
-  const [alertDismissed, setAlertDismissed] = useState(false);
   const [weather, setWeather] = useState<WeatherDay[]>([]);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherError, setWeatherError] = useState(false);
 
   const hasLocation = municipality || region;
-  const greeting = getGreeting(t);
 
   useEffect(() => {
     if (!hasLocation) return;
@@ -92,29 +73,6 @@ export default function DashboardScreen({
               Settings
             </button>
           </div>
-        )}
-
-        {!alertDismissed && hasLocation && (
-          <div className="bg-gradient-to-r from-red-600 to-red-500 text-white rounded-2xl p-4 md:p-5 flex gap-3 shadow-md">
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-red-200" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wide text-red-200 mb-1">{t.alertTitle}</p>
-              <p className="text-sm md:text-base leading-snug">{t.alertMsg}</p>
-            </div>
-            <button onClick={() => setAlertDismissed(true)} className="shrink-0 p-1 rounded-lg hover:bg-red-500/50 transition-colors">
-              <X className="w-4 h-4 text-red-200" />
-            </button>
-          </div>
-        )}
-
-        {alertDismissed && hasLocation && (
-          <button
-            onClick={() => setAlertDismissed(false)}
-            className="w-full flex items-center gap-2 bg-[#0f6b3a] border border-[#1a8a4a] rounded-2xl px-4 py-3 text-xs text-white hover:bg-[#1a8a4a] transition-colors"
-          >
-            <Bell className="w-3.5 h-3.5" />
-            {t.noAlerts}
-          </button>
         )}
 
         {hasLocation && (
